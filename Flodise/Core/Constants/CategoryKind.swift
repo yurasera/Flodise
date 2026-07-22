@@ -14,9 +14,9 @@ enum CategoryKind {
 
     var title: String {
         switch self {
-        case .current: return "Current Path"
-        case .alternative: return "Alternative Path"
-        case .dream: return "Dream Path"
+        case .current: return "Current"
+        case .alternative: return "Alternate"
+        case .dream: return "Dream"
         }
     }
 
