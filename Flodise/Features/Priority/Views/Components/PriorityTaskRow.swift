@@ -51,11 +51,11 @@ struct PriorityTaskRow: View {
     
     private var categoryColor: Color {
         switch task.category?.name {
-        case CategoryKind.learn.title:
+        case CategoryKind.current.title:
             return Color.brandPrimary
-        case CategoryKind.projects.title:
+        case CategoryKind.alternative.title:
             return Color.brandSecondary
-        case CategoryKind.hobbies.title:
+        case CategoryKind.dream.title:
             return Color.brandTertiary
         default:
             return .secondary

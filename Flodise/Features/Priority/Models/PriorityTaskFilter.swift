@@ -24,12 +24,12 @@ struct PriorityTaskFilter {
         switch selectedCategory {
         case .all:
             return true
-        case .learn:
-            return task.category?.name == CategoryKind.learn.title
-        case .projects:
-            return task.category?.name == CategoryKind.projects.title
-        case .hobbies:
-            return task.category?.name == CategoryKind.hobbies.title
+        case .current:
+            return task.category?.name == CategoryKind.current.title
+        case .alternative:
+            return task.category?.name == CategoryKind.alternative.title
+        case .dream:
+            return task.category?.name == CategoryKind.dream.title
         }
     }
     

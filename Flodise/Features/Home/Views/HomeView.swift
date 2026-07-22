@@ -35,12 +35,12 @@ struct HomeView: View {
             } else {
                 HomeDashboard(
                     categories: categories,
-                    learnTasks: viewModel.learnTasks(from: tasks),
-                    projectTasks: viewModel.projectTasks(from: tasks),
-                    hobbyTasks: viewModel.hobbyTasks(from: tasks),
-                    isLearnVisible: $viewModel.isLearnVisible,
-                    isProjectsVisible: $viewModel.isProjectsVisible,
-                    isHobbiesVisible: $viewModel.isHobbiesVisible
+                    currentTasks: viewModel.currentTasks(from: tasks),
+                    alternativeTasks: viewModel.alternativeTasks(from: tasks),
+                    dreamTasks: viewModel.dreamTasks(from: tasks),
+                    isCurrentVisible: $viewModel.isCurrentVisible,
+                    isAlternativeVisible: $viewModel.isAlternativeVisible,
+                    isDreamVisible: $viewModel.isDreamVisible
                 )
 
                 HomeActionBar(

@@ -12,7 +12,7 @@ struct HomeDashboard: View {
     let categories: [Category]
     let currentTasks: [Task]
     let alternativeTasks: [Task]
-    let hobbyTasks: [Task]
+    let dreamTasks: [Task]
     
     @Binding var isCurrentVisible: Bool
     @Binding var isAlternativeVisible: Bool

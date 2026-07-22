@@ -9,9 +9,9 @@ import Foundation
 
 enum CategoryFilter: String, CaseIterable, Identifiable {
     case all = "All"
-    case learn = "Learn"
-    case projects = "Projects"
-    case hobbies = "Hobbies"
+    case current = "Current"
+    case alternative = "Alternative"
+    case dream = "Dream"
     
     var id: String { rawValue }
 }

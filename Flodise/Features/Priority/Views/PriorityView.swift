@@ -85,13 +85,13 @@ private extension PriorityView {
 }
 
 #Preview("Priority Tasks") {
-    let learn = Category(name: "Learn", color: "blue")
-    let projects = Category(name: "Projects", color: "green")
-    let hobbies = Category(name: "Hobbies", color: "yellow")
+    let current = Category(name: "Current", color: "blue")
+    let alternative = Category(name: "Alternative", color: "green")
+    let dream = Category(name: "Dream", color: "yellow")
 
     PriorityView(tasks: [
-        Task(title: "Learn SwiftData", notes: "Model, query, relationship", category: learn),
-        Task(title: "Build Flocus", notes: "Priority flow", category: projects),
-        Task(title: "Sketch UI", notes: "Explore glass style", category: hobbies)
+        Task(title: "Learn SwiftData", notes: "Model, query, relationship", category: current),
+        Task(title: "Build Flocus", notes: "Priority flow", category: alternative),
+        Task(title: "Sketch UI", notes: "Explore glass style", category: dream)
     ])
 }
