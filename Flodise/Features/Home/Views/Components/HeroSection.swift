@@ -13,18 +13,12 @@ struct HomeHeroSection: View {
         VStack {
             Spacer()
             VStack(alignment: .leading, spacing: Spacing.small) {
-                Text("Flocus")
+                Text("Flodise")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .foregroundStyle(Color.brandSecondary)
 
-                Text("Three words.")
-                    .font(.callout)
-                    .foregroundStyle(Color.brandSecondary)
-                Text("Three roles.")
-                    .font(.callout)
-                    .foregroundStyle(Color.brandSecondary)
-                Text("One journey.")
+                Text("Oddyssey Planning")
                     .font(.callout)
                     .foregroundStyle(Color.brandSecondary)
             }
