@@ -55,26 +55,16 @@ struct EditTaskView: View {
                 }
                 .padding(.vertical, 4)
             }
-
-            Section {
-                Button("Save") {
-                    saveChanges()
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .fontWeight(.semibold)
-
-                Button("Cancel", role: .cancel) {
-                    dismiss()
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-            }
-            
-            Section("Task Details") {
-                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
-            }
         }
         .navigationTitle("Edit Task")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Save") {
+                    saveChanges()
+                }
+            }
+        }
         .onAppear {
             title = task.title
             notes = task.notes
