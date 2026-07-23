@@ -22,6 +22,9 @@ final class Task {
     @Relationship(inverse: \Category.tasks)
     var category: Category?
 
+    @Relationship(deleteRule: .cascade, inverse: \TaskIkigaiSelection.task)
+    var ikigaiSelections: [TaskIkigaiSelection]
+
     init(
         title: String,
         notes: String,
@@ -35,6 +38,7 @@ final class Task {
         self.createdAt = .now
         self.focusStartedAt = nil
         self.completedAt = nil
+        self.ikigaiSelections = []
     }
 
 }

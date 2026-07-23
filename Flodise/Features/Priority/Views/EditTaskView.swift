@@ -2,9 +2,9 @@
 //  EditTaskView.swift
 //  Flodise
 //
-//  Created by GitHub Copilot on 23/07/26.
+//  Created by Yuhaya Lissera on 23/07/26.
 //
-
+    
 import SwiftUI
 import SwiftData
 
@@ -79,6 +79,7 @@ struct EditTaskView: View {
             title = task.title
             notes = task.notes
             priorityOrder = task.priorityOrder
+            selectedIkigai = Set(task.ikigaiSelections.compactMap { $0.type })
         }
     }
 }
@@ -88,12 +89,28 @@ private extension EditTaskView {
         task.title = title
         task.notes = notes
         task.priorityOrder = priorityOrder
+        syncIkigaiSelections()
 
         do {
             try modelContext.save()
             dismiss()
         } catch {
             print("Failed to save task: \(error)")
+        }
+    }
+
+    func syncIkigaiSelections() {
+        let currentSelections = task.ikigaiSelections
+        for selection in currentSelections {
+            modelContext.delete(selection)
+        }
+
+        task.ikigaiSelections.removeAll()
+
+        for ikigai in selectedIkigai.sorted(by: { $0.rawValue < $1.rawValue }) {
+            let selection = TaskIkigaiSelection(type: ikigai, task: task)
+            task.ikigaiSelections.append(selection)
+            modelContext.insert(selection)
         }
     }
 

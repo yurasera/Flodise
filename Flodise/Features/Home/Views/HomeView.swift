@@ -69,7 +69,7 @@ struct HomeView: View {
     // Provide a dummy modelContext for preview
     let previewContainer: ModelContainer
     do {
-        previewContainer = try ModelContainer(for: Category.self, Task.self)
+        previewContainer = try ModelContainer(for: Category.self, Task.self, TaskIkigaiSelection.self)
     } catch {
         fatalError("Failed to create preview container")
     }

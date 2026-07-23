@@ -14,7 +14,7 @@ enum DatabaseManager {
 
     static func makeContainer() throws -> ModelContainer {
         do {
-            let container = try ModelContainer(for: Category.self, Task.self)
+            let container = try ModelContainer(for: Category.self, Task.self, TaskIkigaiSelection.self)
             try seedDataIfNeeded(in: ModelContext(container))
             return container
         } catch {
