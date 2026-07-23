@@ -28,8 +28,6 @@ struct EditTaskView: View {
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(3...6)
 
-                Stepper("Priority: \(priorityOrder)", value: $priorityOrder, in: 0...9999)
-
                 DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
             }
 
