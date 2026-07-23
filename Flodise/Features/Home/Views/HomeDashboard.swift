@@ -39,6 +39,7 @@ struct HomeDashboard: View {
             // Right side: 2 vertical sections
             VStack(spacing: 0) {
                 if isAlternativeVisible {
+                    Spacer()
                     HomeCategorySection(category: .alternative, tasks: alternativeTasks)
                 }
                 if isDreamVisible {

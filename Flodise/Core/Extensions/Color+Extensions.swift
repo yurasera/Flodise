@@ -22,7 +22,7 @@ extension Color {
     }
     
     // Brand
-    static let brandPrimary = Color(hex: "#2258C7")
+    static let brandPrimary = Color(hex: "#3A6FD8")
     static let brandSecondary = Color(hex: "#8CC0FA")
     static let brandTertiary = Color(hex: "#FAFEFF")
 

@@ -15,7 +15,7 @@ enum CategoryKind {
     var title: String {
         switch self {
         case .current: return "Current"
-        case .alternative: return "Alternate"
+        case .alternative: return "Alternative"
         case .dream: return "Dream"
         }
     }
@@ -25,7 +25,7 @@ enum CategoryKind {
         switch self {
         case .current: return Color.brandTertiary
         case .alternative: return Color.brandTertiary
-        case .dream: return Color.brandPrimary
+        case .dream: return Color.brandSecondary
         }
     }
 

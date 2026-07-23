@@ -14,10 +14,15 @@ struct HomeCategoryHeader: View {
     
     var body: some View {
         HStack {
-            Text(title == "Hobbies" ? "Creative" : title)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundStyle(color)
+            VStack(alignment: .leading) {
+                Text(title == "Dream" ? "Dream" : title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(color)
+                Text(title == "Current" ? "Engineer" : title == "Alternative" ? "Educator" : title == "Dream" ? "Builder" : title)
+                    .font(.body)
+                    .foregroundStyle(color)
+            }
             
             Spacer()
 

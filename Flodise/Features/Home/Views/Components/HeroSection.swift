@@ -26,6 +26,7 @@ struct HomeHeroSection: View {
             .foregroundColor(.white)
             .padding()
             Spacer()
+            Spacer()
         }
         .frame(maxWidth: .infinity)
         .background(Color.brandPrimary)

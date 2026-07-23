@@ -31,9 +31,9 @@ enum DatabaseManager {
             return
         }
 
-        context.insert(Category(name: "Current Path", color: "blue"))
-        context.insert(Category(name: "Alternative Path", color: "green"))
-        context.insert(Category(name: "Dream Path", color: "yellow"))
+        context.insert(Category(name: "Current", color: "blue"))
+        context.insert(Category(name: "Alternative", color: "green"))
+        context.insert(Category(name: "Dream", color: "yellow"))
 
         try context.save()
     }
