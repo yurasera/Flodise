@@ -44,7 +44,8 @@ struct HomeCategoryCard: View {
             minHeight: Metrics.cardHeight,
             alignment: .leading
         )
-        .padding()
+        .padding(.horizontal, Spacing.medium)
+        .padding(.vertical, Spacing.small)
         .background(
             RoundedRectangle(cornerRadius: Spacing.medium)
                 .fill(
