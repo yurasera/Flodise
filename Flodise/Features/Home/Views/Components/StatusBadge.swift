@@ -19,19 +19,19 @@ struct HomeStatusBadge: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            HStack(spacing: 6) {
-                Image(systemName: category.icon)
-                    .font(.system(size: 12, weight: .semibold))
-            }
-            .foregroundStyle(category.headerColor)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 8)
-            .background(category.backgroundColor)
-            .clipShape(Capsule())
-            .overlay {
-                Capsule()
-                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-            }
+            
+            Circle()
+                .fill(category.backgroundColor)
+                .frame(width: 28, height: 28)
+                .overlay {
+                    Image(systemName: category.icon)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(category.headerColor)
+                }
+                .overlay {
+                    Circle()
+                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                }
 
             if count > 1 {
                 let displayText: String = count > 99 ? "99+" : String(count)

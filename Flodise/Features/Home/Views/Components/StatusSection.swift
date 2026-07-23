@@ -35,7 +35,7 @@ struct HomeStatusSection: View {
         VStack {
             Spacer()
             VStack(spacing: Spacing.medium) {
-                HStack(spacing: Spacing.medium) {
+                HStack(spacing: Spacing.large) {
                     // Current
                     Button {
                         withAnimation(.snappy) { isCurrentVisible.toggle() }

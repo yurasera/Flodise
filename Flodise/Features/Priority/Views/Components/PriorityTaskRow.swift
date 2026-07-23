@@ -17,7 +17,7 @@ struct PriorityTaskRow: View {
             HStack {
                 Circle()
                     .fill(categoryColor)
-                    .frame(width: 32, height: 32)
+                    .frame(width: 24, height: 24)
                     .overlay {
                         Image(systemName: task.category?.icon ?? "circle.fill")
                             .font(.system(size: 10, weight: .semibold))
