@@ -33,6 +33,22 @@ struct PriorityTaskRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+            
+            if !ikigaiTypes.isEmpty {
+                HStack(spacing: 8) {
+                    ForEach(ikigaiTypes) { ikigai in
+                        HStack(spacing: 4) {
+                            Text(ikigai.icon)
+                        }
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.12))
+                        .clipShape(Capsule())
+                    }
+                }
+            }
         }
         .padding(.vertical, 6)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -59,6 +75,12 @@ struct PriorityTaskRow: View {
             return Color.brandTertiary
         default:
             return .secondary
+        }
+    }
+
+    private var ikigaiTypes: [IkigaiType] {
+        IkigaiType.allCases.filter { type in
+            task.ikigaiSelections.contains(where: { $0.type == type })
         }
     }
 }
