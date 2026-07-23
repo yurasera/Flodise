@@ -40,4 +40,17 @@ extension Category {
             return .gray
         }
     }
+    
+    var icon: String {
+        switch name {
+        case "Current":
+            return "briefcase.fill"
+        case "Alternative":
+            return "arrow.trianglehead.branch"
+        case "Dream":
+            return "star.fill"
+        default:
+            return "circle.fill"
+        }
+    }
 }

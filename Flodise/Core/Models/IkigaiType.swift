@@ -17,10 +17,17 @@ enum IkigaiType: String, CaseIterable, Codable, Identifiable {
 
     var icon: String {
         switch self {
-        case .love: return "❤️"
-        case .skill: return "🧠"
-        case .need: return "🌍"
-        case .paid: return "💰"
+        case .love:
+            return "heart.fill"
+
+        case .skill:
+            return "brain"
+
+        case .need:
+            return "globe.asia.australia.fill"
+
+        case .paid:
+            return "banknote.fill"
         }
     }
 

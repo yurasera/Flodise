@@ -15,8 +15,14 @@ struct PriorityTaskRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Image(systemName: "circle.fill")
-                    .foregroundStyle(categoryColor)
+                Circle()
+                    .fill(categoryColor)
+                    .frame(width: 32, height: 32)
+                    .overlay {
+                        Image(systemName: task.category?.icon ?? "circle.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(task.category?.headerColor ?? .gray)
+                    }
                 Text(task.title)
                     .font(.headline)
                 Spacer()
@@ -38,7 +44,9 @@ struct PriorityTaskRow: View {
                 HStack(spacing: 8) {
                     ForEach(ikigaiTypes) { ikigai in
                         HStack(spacing: 4) {
-                            Text(ikigai.icon)
+                            Image(systemName: ikigai.icon)
+                                .font(.system(size: 10, weight: .semibold))
+                                .symbolRenderingMode(.hierarchical)
                         }
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)

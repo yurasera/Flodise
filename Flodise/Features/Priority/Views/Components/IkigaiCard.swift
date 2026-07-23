@@ -19,8 +19,9 @@ struct IkigaiCard: View {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top) {
                     HStack{
-                        Text(icon)
-                            .font(.title2)
+                        Image(systemName: icon)
+                            .font(.system(size: 14, weight: .semibold))
+                            .symbolRenderingMode(.hierarchical)
                         Text(title)
                             .font(.headline)
                     }

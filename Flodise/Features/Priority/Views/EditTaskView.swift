@@ -55,6 +55,12 @@ struct EditTaskView: View {
                 }
                 .padding(.vertical, 4)
             }
+            
+            HStack {
+                Text("\(dueDate)")
+                    .font(.caption)
+            }
+            .padding(.vertical, 4)
         }
         .navigationTitle("Edit Task")
         .navigationBarTitleDisplayMode(.inline)
