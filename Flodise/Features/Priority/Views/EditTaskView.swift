@@ -18,6 +18,7 @@ struct EditTaskView: View {
     @State private var notes: String = ""
     @State private var priorityOrder: Int = 0
     @State private var dueDate: Date = .now
+    @State private var selectedIkigai: Set<IkigaiType> = []
 
     var body: some View {
         Form {
@@ -30,6 +31,36 @@ struct EditTaskView: View {
                 Stepper("Priority: \(priorityOrder)", value: $priorityOrder, in: 0...9999)
 
                 DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+            }
+
+            Section("Ikigai") {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Why are you doing this task?")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.flexible(), spacing: 12),
+                            GridItem(.flexible(), spacing: 12)
+                        ],
+                        spacing: 12
+                    ) {
+                        ForEach(IkigaiType.allCases) { ikigai in
+                            IkigaiCard(
+                                icon: ikigai.icon,
+                                title: ikigai.title,
+                                description: ikigai.description,
+                                isSelected: selectedIkigai.contains(ikigai)
+                            ) {
+                                withAnimation(.snappy) {
+                                    toggleIkigai(ikigai)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
             }
 
             Section {
@@ -66,6 +97,14 @@ private extension EditTaskView {
             dismiss()
         } catch {
             print("Failed to save task: \(error)")
+        }
+    }
+
+    func toggleIkigai(_ ikigai: IkigaiType) {
+        if selectedIkigai.contains(ikigai) {
+            selectedIkigai.remove(ikigai)
+        } else {
+            selectedIkigai.insert(ikigai)
         }
     }
 }
