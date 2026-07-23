@@ -9,27 +9,29 @@ import SwiftUI
 
 struct HomeStatusBadge: View {
 
-    let color: Color
     let count: Int
+    let category: CategoryKind
 
-    init(color: Color, count: Int = 1) {
-        self.color = color
+    init(count: Int = 1, category: CategoryKind) {
         self.count = count
+        self.category = category
     }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.title)
-                .foregroundStyle(color)
-                .background(
-                    Circle()
-                        .fill(color)
-                )
-                .overlay(
-                    Circle()
-                        .stroke(.white, lineWidth: 2)
-                )
+            HStack(spacing: 6) {
+                Image(systemName: category.icon)
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundStyle(category.headerColor)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .background(category.backgroundColor)
+            .clipShape(Capsule())
+            .overlay {
+                Capsule()
+                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+            }
 
             if count > 1 {
                 let displayText: String = count > 99 ? "99+" : String(count)

@@ -37,6 +37,17 @@ enum CategoryKind {
         case .dream: return Color.brandTertiary
         }
     }
+    
+    var icon: String {
+        switch self {
+        case .current:
+            return "location.fill"
+        case .alternative:
+            return "arrow.trianglehead.branch"
+        case .dream:
+            return "star.fill"
+        }
+    }
 
     // Cards to display for each category from model tasks.
     @ViewBuilder

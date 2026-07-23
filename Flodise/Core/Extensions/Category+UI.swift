@@ -24,27 +24,11 @@ extension Category {
             return .gray
         }
     }
-
-    var backgroundColor: Color {
-        switch color {
-        case "blue":
-            return .brandPrimary
-
-        case "green":
-            return .brandSecondary
-
-        case "yellow":
-            return .brandTertiary
-
-        default:
-            return .gray
-        }
-    }
     
     var icon: String {
         switch name {
         case "Current":
-            return "briefcase.fill"
+            return "location.fill"
         case "Alternative":
             return "arrow.trianglehead.branch"
         case "Dream":

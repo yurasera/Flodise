@@ -40,7 +40,7 @@ struct HomeStatusSection: View {
                     Button {
                         withAnimation(.snappy) { isCurrentVisible.toggle() }
                     } label: {
-                        HomeStatusBadge(color: Color.brandPrimary, count: currentCount)
+                        HomeStatusBadge(count: currentCount, category: .current)
                     }
                     .buttonStyle(.plain)
 
@@ -48,7 +48,7 @@ struct HomeStatusSection: View {
                     Button {
                         withAnimation(.snappy) { isAlternativeVisible.toggle() }
                     } label: {
-                        HomeStatusBadge(color: Color.brandSecondary, count: alternativeCount)
+                        HomeStatusBadge(count: alternativeCount, category: .alternative)
                     }
                     .buttonStyle(.plain)
 
@@ -56,7 +56,7 @@ struct HomeStatusSection: View {
                     Button {
                         withAnimation(.snappy) { isDreamVisible.toggle() }
                     } label: {
-                        HomeStatusBadge(color: Color.brandTertiary, count: dreamCount)
+                        HomeStatusBadge(count: dreamCount, category: .dream)
                     }
                     .buttonStyle(.plain)
                 }
