@@ -36,7 +36,7 @@ enum IkigaiType: String, CaseIterable, Codable, Identifiable {
     var description: String {
         switch self {
         case .love: return "Do what you enjoy"
-        case .skill: return "Improve your abilities"
+        case .skill: return "Improve your skill"
         case .need: return "Help others"
         case .paid: return "Earn income"
         }

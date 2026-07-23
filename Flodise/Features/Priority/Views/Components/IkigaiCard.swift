@@ -18,8 +18,12 @@ struct IkigaiCard: View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top) {
-                    Text(icon)
-                        .font(.title2)
+                    HStack{
+                        Text(icon)
+                            .font(.title2)
+                        Text(title)
+                            .font(.headline)
+                    }
 
                     Spacer(minLength: 8)
 
@@ -30,8 +34,7 @@ struct IkigaiCard: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.headline)
+                    
                     Text(description)
                         .font(.subheadline)
                         .foregroundStyle(isSelected ? Color.white.opacity(0.9) : .secondary)
@@ -40,7 +43,7 @@ struct IkigaiCard: View {
 
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity, minHeight: 112, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 20, alignment: .leading)
             .padding(16)
             .foregroundStyle(isSelected ? .white : .primary)
             .background {

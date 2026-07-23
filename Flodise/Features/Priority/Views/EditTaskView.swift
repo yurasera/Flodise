@@ -33,11 +33,8 @@ struct EditTaskView: View {
                 DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
             }
 
-            Section("Ikigai") {
+            Section("Why are you doing this task?") {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Why are you doing this task?")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
 
                     LazyVGrid(
                         columns: [
