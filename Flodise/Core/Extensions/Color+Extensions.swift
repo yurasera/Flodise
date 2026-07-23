@@ -22,9 +22,9 @@ extension Color {
     }
     
     // Brand
-    static let brandPrimary = Color(hex: "#3A6FD8")
-    static let brandSecondary = Color(hex: "#8CC0FA")
-    static let brandTertiary = Color(hex: "#FAFEFF")
+    static let brandPrimary = Color(hex: "#1A47A3")
+    static let brandSecondary = Color(hex: "#5F97EF")
+    static let brandTertiary = Color(hex: "#EEF6FF")
 
     // Surface
     static let surface = Color(hex: "#F8F8F8")
