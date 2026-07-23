@@ -13,14 +13,14 @@ struct HomeCategoryHeader: View {
     let action: () -> Void
     
     var body: some View {
-        HStack {
+        HStack(alignment: .top) {
             VStack(alignment: .leading) {
                 Text(title == "Dream" ? "Dream" : title)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundStyle(color)
                 Text(title == "Current" ? "Engineer" : title == "Alternative" ? "Educator" : title == "Dream" ? "Builder" : title)
-                    .font(.body)
+                    .font(.caption)
                     .foregroundStyle(color)
             }
             
