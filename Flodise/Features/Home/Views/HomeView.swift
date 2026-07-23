@@ -51,7 +51,9 @@ struct HomeView: View {
         }
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
-            PriorityView(tasks: tasks)
+            NavigationStack {
+                PriorityView(tasks: tasks)
+            }
         }
         .onAppear {
             viewModel.setContext(modelContext)

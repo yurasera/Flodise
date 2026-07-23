@@ -26,39 +26,41 @@ struct PriorityView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            List {
-                PriorityFilterSection(
-                    selectedCategory: $selectedCategory,
-                    selectedProgress: $selectedProgress
+        List {
+            PriorityFilterSection(
+                selectedCategory: $selectedCategory,
+                selectedProgress: $selectedProgress
+            )
+
+            if taskFilter.filteredTasks.isEmpty {
+                ContentUnavailableView(
+                    "No Tasks",
+                    systemImage: "checklist",
+                    description: Text("Tidak ada task yang sesuai dengan filter.")
                 )
-                
-                if taskFilter.filteredTasks.isEmpty {
-                    ContentUnavailableView(
-                        "No Tasks",
-                        systemImage: "checklist",
-                        description: Text("Tidak ada task yang sesuai dengan filter.")
-                    )
-                } else {
-                    ForEach(taskFilter.filteredTasks) { task in
+            } else {
+                ForEach(taskFilter.filteredTasks) { task in
+                    NavigationLink {
+                        EditTaskView(task: task)
+                    } label: {
                         PriorityTaskRow(
                             task: task,
                             onDelete: { deleteTask(task) },
                             onArchive: { archiveTask(task) }
                         )
                     }
-                    .onMove(perform: moveTasks)
                 }
+                .onMove(perform: moveTasks)
             }
-            .navigationTitle("Set Priority")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    EditButton()
-                }
+        }
+        .navigationTitle("Set Priority")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                EditButton()
             }
         }
     }
@@ -89,9 +91,11 @@ private extension PriorityView {
     let alternative = Category(name: "Alternative", color: "green")
     let dream = Category(name: "Dream", color: "yellow")
 
-    PriorityView(tasks: [
-        Task(title: "Learn SwiftData", notes: "Model, query, relationship", category: current),
-        Task(title: "Build Flocus", notes: "Priority flow", category: alternative),
-        Task(title: "Sketch UI", notes: "Explore glass style", category: dream)
-    ])
+    NavigationStack {
+        PriorityView(tasks: [
+            Task(title: "Learn SwiftData", notes: "Model, query, relationship", category: current),
+            Task(title: "Build Flocus", notes: "Priority flow", category: alternative),
+            Task(title: "Sketch UI", notes: "Explore glass style", category: dream)
+        ])
+    }
 }
