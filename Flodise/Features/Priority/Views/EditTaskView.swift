@@ -26,9 +26,7 @@ struct EditTaskView: View {
                 TextField("Task Title", text: $title)
 
                 TextField("Notes", text: $notes, axis: .vertical)
-                    .lineLimit(3...6)
-
-                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+                    .lineLimit(2...4)
             }
 
             Section("Why are you doing this task?") {
@@ -69,6 +67,10 @@ struct EditTaskView: View {
                     dismiss()
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
+            }
+            
+            Section("Task Details") {
+                DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
             }
         }
         .navigationTitle("Edit Task")
