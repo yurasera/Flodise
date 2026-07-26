@@ -33,7 +33,7 @@ final class Task {
         self.title = title
         self.notes = notes
         self.category = category
-        self.status = .backlog
+        self.status = .idea
         self.priorityOrder = Int(Date().timeIntervalSince1970)
         self.createdAt = .now
         self.focusStartedAt = nil

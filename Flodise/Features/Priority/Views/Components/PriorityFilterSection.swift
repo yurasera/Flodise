@@ -17,7 +17,7 @@ struct PriorityFilterSection: View {
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Category")
+                        Text("Path")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Spacer()

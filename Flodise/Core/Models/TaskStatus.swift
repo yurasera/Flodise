@@ -6,6 +6,8 @@
 //
 
 enum TaskStatus: String, Codable {
+    case idea
+    case planned
     case backlog
     case focus
     case completed
@@ -13,6 +15,10 @@ enum TaskStatus: String, Codable {
     
     var title: String {
             switch self {
+            case .idea:
+                return "Idea"
+            case .planned:
+                return "Planned"
             case .backlog:
                 return "Backlog"
             case .focus:

@@ -35,6 +35,10 @@ struct PriorityTaskFilter {
     
     private func filterByProgress(_ task: Task) -> Bool {
         switch selectedProgress {
+        case .idea:
+            return task.status == .idea
+        case .planned:
+            return task.status == .planned
         case .active:
             return task.status == .backlog || task.status == .focus
         case .completed:

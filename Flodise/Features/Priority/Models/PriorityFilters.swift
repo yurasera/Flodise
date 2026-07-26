@@ -17,6 +17,8 @@ enum CategoryFilter: String, CaseIterable, Identifiable {
 }
 
 enum ProgressFilter: String, CaseIterable, Identifiable {
+    case idea = "Idea"
+    case planned = "Planned"
     case active = "Active"
     case completed = "Completed"
     case archive = "Archive"
