@@ -194,6 +194,7 @@ struct EditTaskView: View {
             selectedStatus = task.status
             priorityOrder = task.priorityOrder
             selectedIkigai = Set(task.ikigaiSelections.compactMap { $0.type })
+            applyEstimatorState()
         }
     }
 }
@@ -201,6 +202,15 @@ struct EditTaskView: View {
 private extension EditTaskView {
     var hasEstimatorValues: Bool {
         task.estimatedScore != nil || task.estimatedSize != nil || task.estimatedEffort != nil
+    }
+
+    func applyEstimatorState() {
+        let score = task.estimatedScore ?? 0
+        needToLearn = score >= 1
+        dontKnowHow = score >= 2
+        needThinking = score >= 3
+        manySteps = score >= 4
+        needFullFocus = score >= 5
     }
 
     var estimatorScore: Int {
@@ -294,11 +304,7 @@ private extension EditTaskView {
     }
     
     func updateTaskStatus(to newStatus: TaskStatus) {
-        if task.status == .planned && newStatus == .backlog {
-            persistEstimatorScoreIfNeeded(for: .planned)
-        } else {
-            persistEstimatorScoreIfNeeded(for: newStatus)
-        }
+        persistEstimatorScoreIfNeeded(for: newStatus)
 
         task.status = newStatus
 

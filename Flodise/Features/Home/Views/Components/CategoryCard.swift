@@ -92,18 +92,19 @@ struct HomeCategoryCard: View {
     
     private func toggleTaskCompletion() {
         guard let task = task else { return }
+        let effortMultiplier = max(1, task.estimatedEffort ?? 1)
         
         withAnimation(.spring) {
             if task.status == .completed {
                 task.status = .backlog
                 task.completedAt = nil
-                energy = min(10, energy + 1)
-                exp = max(0, exp - 10)
+                energy = min(10, energy + effortMultiplier * 1)
+                exp = max(0, exp - (effortMultiplier * 10))
             } else {
                 task.status = .completed
                 task.completedAt = .now
-                energy = max(0, energy - 1)
-                exp += 10
+                energy = max(0, energy - (effortMultiplier * 1))
+                exp += effortMultiplier * 10
                 while exp >= 100 {
                     exp -= 100
                     level += 1
