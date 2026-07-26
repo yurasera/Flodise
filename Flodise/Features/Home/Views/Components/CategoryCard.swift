@@ -47,6 +47,17 @@ struct HomeCategoryCard: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title3)
                     }
+                } else {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        if let estimatedEffort = task?.estimatedEffort {
+                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.white.opacity(0.18))
+                                .clipShape(Capsule())
+                        }
+                    }
                 }
             }
 
