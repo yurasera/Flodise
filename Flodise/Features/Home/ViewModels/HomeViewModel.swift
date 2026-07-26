@@ -16,6 +16,7 @@ final class HomeViewModel {
     var isCurrentVisible = true
     var isAlternativeVisible = true
     var isDreamVisible = true
+    var energy = 10
     
     private var modelContext: ModelContext?
     
@@ -84,6 +85,10 @@ final class HomeViewModel {
         focusTask.status = .backlog
         focusTask.focusStartedAt = nil
         save()
+    }
+
+    func consumeEnergy() {
+        energy = max(0, energy - 1)
     }
     
     private func save() {

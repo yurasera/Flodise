@@ -15,6 +15,7 @@ struct HomeCategoryCard: View {
     let background: Color
     let foreground: Color
     var task: Task?
+    @Binding var energy: Int
     
     @Environment(\.modelContext) private var modelContext
     
@@ -74,9 +75,11 @@ struct HomeCategoryCard: View {
             if task.status == .completed {
                 task.status = .backlog
                 task.completedAt = nil
+                energy = max(0, energy + 1)
             } else {
                 task.status = .completed
                 task.completedAt = .now
+                energy = max(0, energy - 1)
             }
             toggleTaskCompletionTrigger += 1
             saveChanges()
