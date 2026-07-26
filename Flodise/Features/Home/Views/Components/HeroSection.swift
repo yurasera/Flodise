@@ -65,8 +65,6 @@ struct HomeHeroSection: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundColor(.white)
             .padding()
-            Spacer()
-            Spacer()
         }
         .frame(maxWidth: .infinity)
         .background(Color.brandPrimary)
