@@ -20,14 +20,14 @@ struct HomeHeroSection: View {
                     StopPathView()
                 } label: {
                     Text("Flodise")
-                        .font(.largeTitle)
+                        .font(.title3)
                         .fontWeight(.bold)
                         .foregroundStyle(Color.brandSecondary)
                 }
                 .buttonStyle(.plain)
 
                 Text("Oddyssey Planning")
-                    .font(.callout)
+                    .font(.caption)
                     .foregroundStyle(Color.brandSecondary)
                 
                 VStack(spacing: 8) {
