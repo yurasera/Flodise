@@ -2,7 +2,7 @@
 //  TaskClipboardService.swift
 //  Flodise
 //
-//  Created by Codex on 26/07/26.
+//  Created by Yuhaya Lissera on 26/07/26.
 //
 
 import Foundation
@@ -28,7 +28,7 @@ struct TaskClipboardService {
 
 struct TaskClipboardFormatter {
     struct Configuration {
-        var header = "Flocus Tasks"
+        var header = "Flodise Tasks"
         var footer = "Please help me prioritize, organize, or improve these tasks."
         var dueDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -61,8 +61,6 @@ struct TaskClipboardFormatter {
         var lines = ["\(index + 1). \(item.title)"]
 
         append("Category", item.category, to: &lines)
-        append("Status", item.status, to: &lines)
-        append("Priority", item.priority, to: &lines)
         append("Due Date", formattedDueDate(item.dueDate), to: &lines)
         append("Tags", item.tags.joined(separator: ", "), to: &lines)
 
