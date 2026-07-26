@@ -16,6 +16,8 @@ struct PriorityView: View {
     
     @State private var selectedCategory: CategoryFilter = .all
     @State private var selectedProgress: ProgressFilter = .active
+    @State private var isShowingCopyConfirmation = false
+    @State private var copyConfirmationTrigger = 0
     
     private var taskFilter: PriorityTaskFilter {
         PriorityTaskFilter(
@@ -55,6 +57,20 @@ struct PriorityView: View {
         }
         .navigationTitle("Set Priority")
         .navigationBarTitleDisplayMode(.inline)
+        .overlay(alignment: .bottom) {
+            if isShowingCopyConfirmation {
+                Label("Copied", systemImage: "checkmark.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(.regularMaterial, in: Capsule())
+                    .shadow(color: .black.opacity(0.12), radius: 12, y: 6)
+                    .padding(.bottom, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .sensoryFeedback(.success, trigger: copyConfirmationTrigger)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close") { dismiss() }
@@ -99,6 +115,21 @@ private extension PriorityView {
     
     func copyTasks() {
         TaskClipboardService().copy(taskFilter.filteredTasks)
+        showCopyConfirmation()
+    }
+
+    func showCopyConfirmation() {
+        copyConfirmationTrigger += 1
+
+        withAnimation(.snappy) {
+            isShowingCopyConfirmation = true
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.4) {
+            withAnimation(.snappy) {
+                isShowingCopyConfirmation = false
+            }
+        }
     }
 }
 
