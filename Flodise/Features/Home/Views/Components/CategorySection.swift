@@ -11,6 +11,7 @@ struct HomeCategorySection: View {
     let category: CategoryKind
     let tasks: [Task]
     @Binding var energy: Int
+    @Binding var exp: Int
     @State private var isPresentingAddTask = false
     
     var body: some View {
@@ -20,7 +21,7 @@ struct HomeCategorySection: View {
                 HomeCategoryHeader(title: category.title, color: category.headerColor) {
                     isPresentingAddTask = true
                 }
-                category.cards(for: tasks, energy: $energy)
+                category.cards(for: tasks, energy: $energy, exp: $exp)
             }
             .foregroundColor(.white)
             .padding()

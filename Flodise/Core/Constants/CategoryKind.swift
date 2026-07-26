@@ -51,7 +51,7 @@ enum CategoryKind {
 
     // Cards to display for each category from model tasks.
     @ViewBuilder
-    func cards(for tasks: [Task], energy: Binding<Int>) -> some View {
+    func cards(for tasks: [Task], energy: Binding<Int>, exp: Binding<Int>) -> some View {
         let limited = Array(tasks.prefix(2))
         if limited.isEmpty {
             // Show two empty placeholder cards when there is no data
@@ -61,7 +61,8 @@ enum CategoryKind {
                 background: headerColor,
                 foreground: backgroundColor,
                 task: nil,
-                energy: energy
+                energy: energy,
+                exp: exp
             )
                 HomeCategoryCard(
                 title: "",
@@ -69,7 +70,8 @@ enum CategoryKind {
                 background: headerColor,
                 foreground: backgroundColor,
                 task: nil,
-                energy: energy
+                energy: energy,
+                exp: exp
             )
         } else {
             ForEach(limited) { task in
@@ -79,7 +81,8 @@ enum CategoryKind {
                     background: headerColor,
                     foreground: backgroundColor,
                     task: task,
-                    energy: energy
+                    energy: energy,
+                    exp: exp
                 )
             }
         }

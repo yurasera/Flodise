@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeHeroSection: View {
     let categories: [Category]
     let energy: Int
+    let exp: Int
     var body: some View {
         VStack {
             Spacer()
@@ -49,11 +50,11 @@ struct HomeHeroSection: View {
 
                             Spacer()
 
-                            Text("0/100")
+                            Text("\(exp)/100")
                                 .monospacedDigit()
                         }
 
-                        ProgressView(value: 0, total: 100)
+                        ProgressView(value: Double(exp), total: 100)
                             .tint(.blue)
                     }
                 }
