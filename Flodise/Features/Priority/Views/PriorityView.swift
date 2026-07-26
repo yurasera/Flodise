@@ -62,6 +62,17 @@ struct PriorityView: View {
             ToolbarItem(placement: .primaryAction) {
                 EditButton()
             }
+            ToolbarItem(placement: .topBarTrailing) {
+               Menu {
+                   Button {
+                       exportTasks()
+                   } label: {
+                       Label("Export", systemImage: "square.and.arrow.up")
+                   }
+               } label: {
+                   Image(systemName: "ellipsis.circle")
+               }
+           }
         }
     }
 }
@@ -83,6 +94,10 @@ private extension PriorityView {
     func archiveTask(_ task: Task) {
         task.status = .archive
         try? modelContext.save()
+    }
+    
+    func exportTasks() {
+        // TODO: Implement export.
     }
 }
 
