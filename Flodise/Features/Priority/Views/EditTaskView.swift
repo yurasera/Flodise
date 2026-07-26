@@ -26,9 +26,11 @@ struct EditTaskView: View {
             Section("Task Details") {
                 TextField("Task Title", text: $title)
 
-                Picker("Status", selection: $selectedStatus) {
-                    ForEach(TaskStatus.allCases, id: \.self) { status in
-                        Text(status.title).tag(status)
+                if task.status == .archive {
+                    Picker("Status", selection: $selectedStatus) {
+                        ForEach(TaskStatus.allCases, id: \.self) { status in
+                            Text(status.title).tag(status)
+                        }
                     }
                 }
 
