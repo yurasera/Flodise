@@ -43,19 +43,19 @@ struct EditTaskView: View {
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(2...4)
             }
-            if let estimatedSize = task.estimatedSize, let estimatedEffort = task.estimatedEffort, let estimatedScore = task.estimatedScore {
+            if selectedStatus == .idea || hasEstimatorValues {
                 Section("Task Estimator") {
                     VStack(spacing: 12) {
                         HStack {
-                            Label(estimatedSize, systemImage: "square.stack.3d.up")
+                            Label(estimatorSize, systemImage: "square.stack.3d.up")
 
                             Spacer()
 
-                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                            Label("\(estimatorEffort)", systemImage: "bolt.fill")
 
                             Spacer()
 
-                            Label("\(estimatedScore)", systemImage: "star.fill")
+                            Label("\(estimatorScore)", systemImage: "star.fill")
                         }
                         .font(.body.weight(.medium))
                         .foregroundStyle(.secondary)
@@ -199,6 +199,10 @@ struct EditTaskView: View {
 }
 
 private extension EditTaskView {
+    var hasEstimatorValues: Bool {
+        task.estimatedScore != nil || task.estimatedSize != nil || task.estimatedEffort != nil
+    }
+
     var estimatorScore: Int {
         [
             needToLearn,
@@ -307,13 +311,6 @@ private extension EditTaskView {
     }
 
     func persistEstimatorScoreIfNeeded(for status: TaskStatus) {
-        guard status == .planned else {
-            task.estimatedScore = nil
-            task.estimatedSize = nil
-            task.estimatedEffort = nil
-            return
-        }
-
         task.estimatedScore = estimatorScore
         task.estimatedSize = estimatorSize
         task.estimatedEffort = estimatorEffort

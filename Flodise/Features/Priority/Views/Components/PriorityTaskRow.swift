@@ -58,10 +58,22 @@ struct PriorityTaskRow: View {
                 }
             }
 
-            if task.status == .planned, let estimatedSize = task.estimatedSize, let estimatedEffort = task.estimatedEffort {
+            if task.estimatedSize != nil ||
+               task.estimatedEffort != nil ||
+               task.estimatedScore != nil {
+
                 HStack(spacing: 8) {
-                    Label(estimatedSize, systemImage: "square.stack.3d.up")
-                    Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                    if let estimatedSize = task.estimatedSize {
+                        Label(estimatedSize, systemImage: "square.stack.3d.up")
+                    }
+
+                    if let estimatedEffort = task.estimatedEffort {
+                        Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                    }
+
+                    if let estimatedScore = task.estimatedScore {
+                        Label("\(estimatedScore)", systemImage: "star.fill")
+                    }
                 }
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
