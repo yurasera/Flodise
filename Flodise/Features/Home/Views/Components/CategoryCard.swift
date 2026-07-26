@@ -86,7 +86,7 @@ struct HomeCategoryCard: View {
             if task.status == .completed {
                 task.status = .backlog
                 task.completedAt = nil
-                energy = max(0, energy + 1)
+                energy = min(10, energy + 1)
                 exp = max(0, exp - 10)
             } else {
                 task.status = .completed

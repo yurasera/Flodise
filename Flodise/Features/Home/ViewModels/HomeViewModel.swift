@@ -106,7 +106,7 @@ final class HomeViewModel {
 
     func consumeEnergy() {
         ensureDailyEnergyReset()
-        energy = max(0, energy - 1)
+        energy = min(10, max(0, energy - 1))
     }
 
     func gainExp() {
