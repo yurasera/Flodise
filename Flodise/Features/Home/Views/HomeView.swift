@@ -62,6 +62,7 @@ struct HomeView: View {
         }
         .onAppear {
             viewModel.setContext(modelContext)
+            viewModel.ensureDailyEnergyReset()
         }
     }
 

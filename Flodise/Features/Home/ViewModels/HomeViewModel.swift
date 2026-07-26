@@ -21,6 +21,9 @@ final class HomeViewModel {
     var exp = 0
     
     private var modelContext: ModelContext?
+    private let defaults = UserDefaults.standard
+    private let energyResetDateKey = "homeEnergyResetDate"
+    private var energyResetTimer: Timer?
     
     // MARK: - Initialization
     init(modelContext: ModelContext? = nil) {
@@ -29,6 +32,7 @@ final class HomeViewModel {
     
     func setContext(_ context: ModelContext) {
         self.modelContext = context
+        ensureDailyEnergyReset()
     }
     
     // MARK: - Task Filtering
@@ -90,15 +94,32 @@ final class HomeViewModel {
     }
 
     func consumeEnergy() {
+        ensureDailyEnergyReset()
         energy = max(0, energy - 1)
     }
 
     func gainExp() {
+        ensureDailyEnergyReset()
         exp += 10
         while exp >= 100 {
             exp -= 100
             level += 1
         }
+    }
+
+    func ensureDailyEnergyReset() {
+        let now = Date()
+        let calendar = Calendar.current
+        let lastReset = defaults.object(forKey: energyResetDateKey) as? Date
+
+        if let lastReset, calendar.isDate(lastReset, inSameDayAs: now) {
+            scheduleNextEnergyReset()
+            return
+        }
+
+        energy = 10
+        defaults.set(now, forKey: energyResetDateKey)
+        scheduleNextEnergyReset()
     }
     
     private func save() {
@@ -106,6 +127,28 @@ final class HomeViewModel {
             try modelContext?.save()
         } catch {
             print("Failed to save context: \(error)")
+        }
+    }
+
+    private func scheduleNextEnergyReset() {
+        energyResetTimer?.invalidate()
+
+        let calendar = Calendar.current
+        let now = Date()
+        guard let nextMidnight = calendar.nextDate(
+            after: now,
+            matching: DateComponents(hour: 0, minute: 0, second: 0),
+            matchingPolicy: .nextTime
+        ) else {
+            return
+        }
+
+        let interval = nextMidnight.timeIntervalSince(now)
+        energyResetTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            self.energy = 10
+            self.defaults.set(Date(), forKey: self.energyResetDateKey)
+            self.scheduleNextEnergyReset()
         }
     }
 }
