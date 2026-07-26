@@ -20,6 +20,8 @@ struct HomeCategoryCard: View {
     
     private static let logger = Logger(subsystem: "com.yuhayalissera.Flocus", category: "CategoryCard")
 
+    @State private var toggleTaskCompletionTrigger = 0
+    
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.small) {
 
@@ -58,6 +60,7 @@ struct HomeCategoryCard: View {
         .onTapGesture {
             toggleTaskCompletion()
         }
+        .sensoryFeedback(.impact(weight: .medium), trigger: toggleTaskCompletionTrigger)
     }
     
     private var isCompleted: Bool {
@@ -75,7 +78,7 @@ struct HomeCategoryCard: View {
                 task.status = .completed
                 task.completedAt = .now
             }
-            
+            toggleTaskCompletionTrigger += 1
             saveChanges()
         }
     }

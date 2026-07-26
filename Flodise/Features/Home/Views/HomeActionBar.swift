@@ -37,7 +37,7 @@ struct HomeActionBar: View {
             }
         }
         .frame(height: 96)
-        .sensoryFeedback(.impact(weight: .medium), trigger: priorityPresentationTrigger)
+        .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
     }
 }
 
