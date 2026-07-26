@@ -55,6 +55,21 @@ struct EditTaskView: View {
                 }
                 .padding(.vertical, 4)
             }
+
+            if task.status == .idea {
+                Button {
+                    task.status = .planned
+
+                    do {
+                        try modelContext.save()
+                    } catch {
+                        print("Failed to update task status: \(error)")
+                    }
+                } label: {
+                    Text("Move to Planned")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }
             
             HStack {
                 Text("\(dueDate)")
