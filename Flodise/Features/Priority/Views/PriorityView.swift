@@ -63,16 +63,17 @@ struct PriorityView: View {
                 EditButton()
             }
             ToolbarItem(placement: .topBarTrailing) {
-               Menu {
-                   Button {
-                       exportTasks()
-                   } label: {
-                       Label("Export", systemImage: "square.and.arrow.up")
-                   }
-               } label: {
-                   Image(systemName: "ellipsis.circle")
-               }
-           }
+                Menu {
+                    Button {
+                        copyTasks()
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                    .disabled(taskFilter.filteredTasks.isEmpty)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
         }
     }
 }
@@ -96,8 +97,8 @@ private extension PriorityView {
         try? modelContext.save()
     }
     
-    func exportTasks() {
-        // TODO: Implement export.
+    func copyTasks() {
+        TaskClipboardService().copy(taskFilter.filteredTasks)
     }
 }
 
