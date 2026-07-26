@@ -32,21 +32,27 @@ final class HomeViewModel {
     func currentTasks(from tasks: [Task]) -> [Task] {
         tasks.filter {
             $0.category?.name == CategoryKind.current.title &&
-            $0.status != .archive
+            $0.status != .archive &&
+            $0.status != .idea &&
+            $0.status != .planned
         }
     }
 
     func alternativeTasks(from tasks: [Task]) -> [Task] {
         tasks.filter {
             $0.category?.name == CategoryKind.alternative.title &&
-            $0.status != .archive
+            $0.status != .archive &&
+            $0.status != .idea &&
+            $0.status != .planned
         }
     }
 
     func dreamTasks(from tasks: [Task]) -> [Task] {
         tasks.filter {
             $0.category?.name == CategoryKind.dream.title &&
-            $0.status != .archive
+            $0.status != .archive &&
+            $0.status != .idea &&
+            $0.status != .planned
         }
     }
     
