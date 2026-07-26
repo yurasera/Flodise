@@ -43,6 +43,45 @@ struct EditTaskView: View {
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(2...4)
             }
+            if let estimatedSize = task.estimatedSize, let estimatedEffort = task.estimatedEffort, let estimatedScore = task.estimatedScore {
+                Section("Task Estimator") {
+                    VStack(spacing: 12) {
+                        HStack {
+                            Label(estimatedSize, systemImage: "square.stack.3d.up")
+
+                            Spacer()
+
+                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
+
+                            Spacer()
+
+                            Label("\(estimatedScore)", systemImage: "star.fill")
+                        }
+                        .font(.body.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.secondary.opacity(0.12))
+                        )
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Size menunjukkan tingkat kompleksitas task (Extra Small, Small, Medium, Large atau Extra Large).", systemImage: "square.stack.3d.up")
+                            
+                            Divider()
+
+                            Label("Effort adalah jumlah poin dari lima indikator: Perlu Belajar, Belum Tahu Cara, Perlu Banyak Berpikir, Perlu Banyak Langkah, dan Butuh Fokus Penuh.", systemImage: "bolt.fill")
+
+                            Divider()
+                            
+                            Label("Score merupakan nilai keseluruhan yang membantu menentukan prioritas pengerjaan task.", systemImage: "star.fill")
+                        }
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    }
+                }
+            }
             if task.status != .idea && task.status != .planned {
                 Section("Why are you doing this task?") {
                     VStack(alignment: .leading, spacing: 16) {
