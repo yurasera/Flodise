@@ -13,10 +13,15 @@ struct HomeHeroSection: View {
         VStack {
             Spacer()
             VStack(alignment: .leading, spacing: Spacing.small) {
-                Text("Flodise")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.brandSecondary)
+                NavigationLink {
+                    StopPathView()
+                } label: {
+                    Text("Flodise")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color.brandSecondary)
+                }
+                .buttonStyle(.plain)
 
                 Text("Oddyssey Planning")
                     .font(.callout)
@@ -33,3 +38,25 @@ struct HomeHeroSection: View {
     }
 }
 
+private struct StopPathView: View {
+    var body: some View {
+        VStack(spacing: 4) {
+            Text("STOP.")
+                .font(.title.weight(.bold))
+                .multilineTextAlignment(.center)
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 16, trailing: 0))
+
+            Text("Jalan sudah dipilih.")
+                .font(.title2.weight(.bold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.black)
+            
+            Text("Istirahatkan pikiranmu.")
+                .font(.title2.weight(.bold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.black)
+        }
+        .padding()
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}

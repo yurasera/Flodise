@@ -29,27 +29,29 @@ struct HomeView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if let focusTask = viewModel.focusTask(from: tasks) {
-                FocusView(task: focusTask, stopFocus: stopFocus)
-            } else {
-                HomeDashboard(
-                    categories: categories,
-                    currentTasks: viewModel.currentTasks(from: tasks),
-                    alternativeTasks: viewModel.alternativeTasks(from: tasks),
-                    dreamTasks: viewModel.dreamTasks(from: tasks),
-                    isCurrentVisible: $viewModel.isCurrentVisible,
-                    isAlternativeVisible: $viewModel.isAlternativeVisible,
-                    isDreamVisible: $viewModel.isDreamVisible
-                )
+        NavigationStack {
+            VStack(spacing: 0) {
+                if let focusTask = viewModel.focusTask(from: tasks) {
+                    FocusView(task: focusTask, stopFocus: stopFocus)
+                } else {
+                    HomeDashboard(
+                        categories: categories,
+                        currentTasks: viewModel.currentTasks(from: tasks),
+                        alternativeTasks: viewModel.alternativeTasks(from: tasks),
+                        dreamTasks: viewModel.dreamTasks(from: tasks),
+                        isCurrentVisible: $viewModel.isCurrentVisible,
+                        isAlternativeVisible: $viewModel.isAlternativeVisible,
+                        isDreamVisible: $viewModel.isDreamVisible
+                    )
 
-                HomeActionBar(
-                    isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
-                    startFocusAction: { viewModel.startFocus(tasks: tasks) }
-                )
+                    HomeActionBar(
+                        isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
+                        startFocusAction: { viewModel.startFocus(tasks: tasks) }
+                    )
+                }
             }
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea()
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
             NavigationStack {
                 PriorityView(tasks: tasks)
