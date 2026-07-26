@@ -5,7 +5,7 @@
 //  Created by Yuhaya Lissera on 01/07/26.
 //
 
-enum TaskStatus: String, Codable {
+enum TaskStatus: String, Codable, CaseIterable {
     case idea
     case planned
     case backlog

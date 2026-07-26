@@ -16,6 +16,7 @@ struct EditTaskView: View {
 
     @State private var title: String = ""
     @State private var notes: String = ""
+    @State private var selectedStatus: TaskStatus = .idea
     @State private var priorityOrder: Int = 0
     @State private var dueDate: Date = .now
     @State private var selectedIkigai: Set<IkigaiType> = []
@@ -24,6 +25,12 @@ struct EditTaskView: View {
         Form {
             Section("Task Details") {
                 TextField("Task Title", text: $title)
+
+                Picker("Status", selection: $selectedStatus) {
+                    ForEach(TaskStatus.allCases, id: \.self) { status in
+                        Text(status.title).tag(status)
+                    }
+                }
 
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(2...4)
@@ -55,7 +62,6 @@ struct EditTaskView: View {
                 }
                 .padding(.vertical, 4)
             }
-
             if task.status == .idea {
                 Button {
                     updateTaskStatus(to: .planned)
@@ -90,6 +96,7 @@ struct EditTaskView: View {
         .onAppear {
             title = task.title
             notes = task.notes
+            selectedStatus = task.status
             priorityOrder = task.priorityOrder
             selectedIkigai = Set(task.ikigaiSelections.compactMap { $0.type })
         }
@@ -100,6 +107,7 @@ private extension EditTaskView {
     func saveChanges() {
         task.title = title
         task.notes = notes
+        task.status = selectedStatus
         task.priorityOrder = priorityOrder
         syncIkigaiSelections()
 
@@ -133,7 +141,7 @@ private extension EditTaskView {
             selectedIkigai.insert(ikigai)
         }
     }
-
+    
     func updateTaskStatus(to newStatus: TaskStatus) {
         task.status = newStatus
 
@@ -144,6 +152,7 @@ private extension EditTaskView {
             print("Failed to update task status: \(error)")
         }
     }
+
 }
 
 #Preview {
