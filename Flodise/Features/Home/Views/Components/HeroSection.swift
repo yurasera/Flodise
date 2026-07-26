@@ -26,6 +26,38 @@ struct HomeHeroSection: View {
                 Text("Oddyssey Planning")
                     .font(.callout)
                     .foregroundStyle(Color.brandSecondary)
+                
+                VStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Label("Energy", systemImage: "bolt.fill")
+
+                            Spacer()
+
+                            Text("10/10")
+                                .monospacedDigit()
+                        }
+
+                        ProgressView(value: 0, total: 10)
+                            .tint(.yellow)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Label("EXP", systemImage: "sparkles")
+
+                            Spacer()
+
+                            Text("0/100")
+                                .monospacedDigit()
+                        }
+
+                        ProgressView(value: 0, total: 100)
+                            .tint(.blue)
+                    }
+                }
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundColor(.white)
