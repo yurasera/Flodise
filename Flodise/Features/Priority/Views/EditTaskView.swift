@@ -29,7 +29,7 @@ struct EditTaskView: View {
                 if task.status == .archive {
                     Picker("Status", selection: $selectedStatus) {
                         ForEach(TaskStatus.allCases, id: \.self) { status in
-                            Text(status.title).tag(status)
+                            Text(status.title == "Backlog" ? "Active" : status.title).tag(status)
                         }
                     }
                 }

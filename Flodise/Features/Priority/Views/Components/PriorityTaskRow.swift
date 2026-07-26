@@ -33,12 +33,6 @@ struct PriorityTaskRow: View {
                     .background(Color.secondary.opacity(0.12))
                     .clipShape(Capsule())
             }
-            Text(task.status.title)
-                .font(.caption)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.secondary.opacity(0.12))
-                .clipShape(Capsule())
 
             if !task.notes.isEmpty {
                 Text(task.notes)
