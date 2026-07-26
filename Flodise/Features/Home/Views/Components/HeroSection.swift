@@ -39,6 +39,8 @@ struct HomeHeroSection: View {
 }
 
 private struct StopPathView: View {
+    @State private var colorScheme: ColorScheme = .light
+
     var body: some View {
         VStack(spacing: 4) {
             Text("STOP.")
@@ -49,14 +51,27 @@ private struct StopPathView: View {
             Text("Jalan sudah dipilih.")
                 .font(.title2.weight(.bold))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.black)
-            
+                .foregroundStyle(.primary)
+
             Text("Istirahatkan pikiranmu.")
                 .font(.title2.weight(.bold))
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
+        .preferredColorScheme(colorScheme)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    colorScheme = colorScheme == .dark ? .light : .dark
+                } label: {
+                    Image(systemName: colorScheme == .dark ? "sun.max.fill" : "moon.fill")
+                }
+                .accessibilityLabel(colorScheme == .dark ? "Switch to Light Mode" : "Switch to Dark Mode")
+            }
+        }
     }
 }
