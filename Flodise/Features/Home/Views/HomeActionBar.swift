@@ -10,7 +10,9 @@ import SwiftUI
 struct HomeActionBar: View {
     @Binding var isPresentingPriorityTasks: Bool
     let startFocusAction: () -> Void
-    
+
+    @State private var priorityPresentationTrigger = 0
+
     var body: some View {
         HStack(spacing: 0) {
             HomeActionButton(
@@ -20,6 +22,7 @@ struct HomeActionBar: View {
                 backgroundColor: Color.brandPrimary,
                 tintColor: Color.brandPrimary
             ) {
+                priorityPresentationTrigger += 1
                 isPresentingPriorityTasks = true
             }
             
@@ -29,10 +32,12 @@ struct HomeActionBar: View {
                 foregroundColor: Color.brandPrimary,
                 backgroundColor: Color.brandTertiary
             ) {
+                priorityPresentationTrigger += 1
                 startFocusAction()
             }
         }
         .frame(height: 96)
+        .sensoryFeedback(.impact(weight: .medium), trigger: priorityPresentationTrigger)
     }
 }
 
