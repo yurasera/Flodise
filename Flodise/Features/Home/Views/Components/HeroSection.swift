@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeHeroSection: View {
     let categories: [Category]
     let energy: Int
+    let level: Int
     let exp: Int
     var body: some View {
         VStack {
@@ -46,7 +47,7 @@ struct HomeHeroSection: View {
 
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
-                            Label("EXP", systemImage: "sparkles")
+                            Label("Level \(level)", systemImage: "sparkles")
 
                             Spacer()
 

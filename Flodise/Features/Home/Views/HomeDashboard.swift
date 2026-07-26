@@ -14,6 +14,7 @@ struct HomeDashboard: View {
     let alternativeTasks: [Task]
     let dreamTasks: [Task]
     @Binding var energy: Int
+    @Binding var level: Int
     @Binding var exp: Int
     
     @Binding var isCurrentVisible: Bool
@@ -24,9 +25,9 @@ struct HomeDashboard: View {
         HStack(spacing: 0) {
             // Left side: 3 vertical sections
             VStack(spacing: 0) {
-                HomeHeroSection(categories: categories, energy: energy, exp: exp)
+                HomeHeroSection(categories: categories, energy: energy, level: level, exp: exp)
                 if isCurrentVisible {
-                    HomeCategorySection(category: .current, tasks: currentTasks, energy: $energy, exp: $exp)
+                    HomeCategorySection(category: .current, tasks: currentTasks, energy: $energy, level: $level, exp: $exp)
                 }
                 HomeStatusSection(
                     currentCount: currentTasks.count,
@@ -42,10 +43,10 @@ struct HomeDashboard: View {
             VStack(spacing: 0) {
                 if isAlternativeVisible {
                     Spacer()
-                    HomeCategorySection(category: .alternative, tasks: alternativeTasks, energy: $energy, exp: $exp)
+                    HomeCategorySection(category: .alternative, tasks: alternativeTasks, energy: $energy, level: $level, exp: $exp)
                 }
                 if isDreamVisible {
-                    HomeCategorySection(category: .dream, tasks: dreamTasks, energy: $energy, exp: $exp)
+                    HomeCategorySection(category: .dream, tasks: dreamTasks, energy: $energy, level: $level, exp: $exp)
                 }
             }
         }

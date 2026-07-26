@@ -40,6 +40,7 @@ struct HomeView: View {
                         alternativeTasks: viewModel.alternativeTasks(from: tasks),
                         dreamTasks: viewModel.dreamTasks(from: tasks),
                         energy: $viewModel.energy,
+                        level: $viewModel.level,
                         exp: $viewModel.exp,
                         isCurrentVisible: $viewModel.isCurrentVisible,
                         isAlternativeVisible: $viewModel.isAlternativeVisible,

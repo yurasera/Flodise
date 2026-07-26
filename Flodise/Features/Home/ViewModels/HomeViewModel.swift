@@ -17,6 +17,7 @@ final class HomeViewModel {
     var isAlternativeVisible = true
     var isDreamVisible = true
     var energy = 10
+    var level = 1
     var exp = 0
     
     private var modelContext: ModelContext?
@@ -93,7 +94,11 @@ final class HomeViewModel {
     }
 
     func gainExp() {
-        exp = min(100, exp + 10)
+        exp += 10
+        while exp >= 100 {
+            exp -= 100
+            level += 1
+        }
     }
     
     private func save() {

@@ -16,6 +16,7 @@ struct HomeCategoryCard: View {
     let foreground: Color
     var task: Task?
     @Binding var energy: Int
+    @Binding var level: Int
     @Binding var exp: Int
     
     @Environment(\.modelContext) private var modelContext
@@ -35,8 +36,17 @@ struct HomeCategoryCard: View {
                 Spacer()
 
                 if isCompleted {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("Lv. \(level)")
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.white.opacity(0.18))
+                            .clipShape(Capsule())
+
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title3)
+                    }
                 }
             }
 
@@ -77,12 +87,16 @@ struct HomeCategoryCard: View {
                 task.status = .backlog
                 task.completedAt = nil
                 energy = max(0, energy + 1)
-                exp = min(100, exp - 10)
+                exp = max(0, exp - 10)
             } else {
                 task.status = .completed
                 task.completedAt = .now
                 energy = max(0, energy - 1)
-                exp = min(100, exp + 10)
+                exp += 10
+                while exp >= 100 {
+                    exp -= 100
+                    level += 1
+                }
             }
             toggleTaskCompletionTrigger += 1
             saveChanges()
