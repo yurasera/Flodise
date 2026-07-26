@@ -16,22 +16,33 @@ final class HomeViewModel {
     var isCurrentVisible = true
     var isAlternativeVisible = true
     var isDreamVisible = true
-    var energy = 10
-    var level = 1
-    var exp = 0
+    var energy = 10 {
+        didSet { saveEnergy() }
+    }
+    var level = 1 {
+        didSet { saveProgress() }
+    }
+    var exp = 0 {
+        didSet { saveProgress() }
+    }
     
     private var modelContext: ModelContext?
     private let defaults = UserDefaults.standard
     private let energyResetDateKey = "homeEnergyResetDate"
+    private let energyKey = "homeEnergy"
+    private let levelKey = "homeLevel"
+    private let expKey = "homeExp"
     private var energyResetTimer: Timer?
     
     // MARK: - Initialization
     init(modelContext: ModelContext? = nil) {
         self.modelContext = modelContext
+        loadProgress()
     }
     
     func setContext(_ context: ModelContext) {
         self.modelContext = context
+        loadProgress()
         ensureDailyEnergyReset()
     }
     
@@ -118,8 +129,18 @@ final class HomeViewModel {
         }
 
         energy = 10
+        saveEnergy()
         defaults.set(now, forKey: energyResetDateKey)
         scheduleNextEnergyReset()
+    }
+
+    func saveEnergy() {
+        defaults.set(energy, forKey: energyKey)
+    }
+
+    func saveProgress() {
+        defaults.set(level, forKey: levelKey)
+        defaults.set(exp, forKey: expKey)
     }
     
     private func save() {
@@ -127,6 +148,24 @@ final class HomeViewModel {
             try modelContext?.save()
         } catch {
             print("Failed to save context: \(error)")
+        }
+    }
+
+    private func loadProgress() {
+        let savedEnergy = defaults.object(forKey: energyKey) as? Int
+        let savedLevel = defaults.object(forKey: levelKey) as? Int
+        let savedExp = defaults.object(forKey: expKey) as? Int
+
+        if let savedEnergy {
+            energy = min(max(0, savedEnergy), 10)
+        }
+
+        if let savedLevel {
+            level = max(1, savedLevel)
+        }
+
+        if let savedExp {
+            exp = min(max(0, savedExp), 99)
         }
     }
 
