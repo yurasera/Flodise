@@ -10,7 +10,6 @@ import SwiftUI
 struct PriorityFilterSection: View {
     @Binding var selectedCategory: CategoryFilter
     @Binding var selectedProgress: ProgressFilter
-    @State private var showProgressFilter = false
     
     var body: some View {
         Section {
@@ -21,56 +20,28 @@ struct PriorityFilterSection: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                         Spacer()
-                        Button {
-                            withAnimation(.snappy) {
-                                showProgressFilter.toggle()
+                        Menu {
+                            ForEach(ProgressFilter.allCases) { progress in
+                                Button {
+                                    selectedProgress = progress
+                                } label: {
+                                    Label(progress.rawValue, systemImage: selectedProgress == progress ? "checkmark" : "")
+                                }
                             }
                         } label: {
                             HStack(spacing: 6) {
                                 Text(selectedProgress.rawValue)
-                                Image(systemName: showProgressFilter ? "chevron.up" : "chevron.down")
+                                Image(systemName: "chevron.down")
                                     .font(.caption2)
                             }
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.primary)
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, 8)
                             .padding(.vertical, 8)
                             .background(.thinMaterial, in: Capsule())
                         }
                     }
-                    
-                    if showProgressFilter {
-                        VStack(spacing: 8) {
-                            ForEach(ProgressFilter.allCases) { progress in
-                                Button {
-                                    selectedProgress = progress
-                                    withAnimation(.snappy) {
-                                        showProgressFilter = false
-                                    }
-                                } label: {
-                                    HStack {
-                                        Text(progress.rawValue)
-                                        Spacer()
-                                        if selectedProgress == progress {
-                                            Image(systemName: "checkmark")
-                                                .font(.caption.weight(.semibold))
-                                        }
-                                    }
-                                    .font(.subheadline)
-                                    .foregroundStyle(.primary)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 10)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(selectedProgress == progress ? Color.secondary.opacity(0.14) : Color.clear)
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .padding(.top, 4)
-                    }
-                    
+
                     Picker("Category", selection: $selectedCategory) {
                         ForEach(CategoryFilter.allCases) { category in
                             Text(category.rawValue == "Hobbies" ? "Creative" : category.rawValue).tag(category)
