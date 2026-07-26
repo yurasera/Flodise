@@ -40,47 +40,49 @@ struct PriorityTaskRow: View {
                     .foregroundStyle(.secondary)
             }
             
-            if !ikigaiTypes.isEmpty {
-                HStack(spacing: 8) {
-                    ForEach(ikigaiTypes) { ikigai in
-                        HStack(spacing: 4) {
-                            Image(systemName: ikigai.icon)
-                                .font(.system(size: 10, weight: .semibold))
-                                .symbolRenderingMode(.hierarchical)
+            HStack(spacing: 8) {
+                if !ikigaiTypes.isEmpty {
+                    HStack {
+                        ForEach(ikigaiTypes) { ikigai in
+                            HStack(spacing: 4) {
+                                Image(systemName: ikigai.icon)
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.12))
+                            .clipShape(Capsule())
                         }
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.12))
-                        .clipShape(Capsule())
                     }
                 }
-            }
-
-            if task.estimatedSize != nil ||
-               task.estimatedEffort != nil ||
-               task.estimatedScore != nil {
-
-                HStack(spacing: 8) {
-                    if let estimatedSize = task.estimatedSize {
-                        Label(estimatedSize, systemImage: "square.stack.3d.up")
+                
+                if task.estimatedSize != nil ||
+                    task.estimatedEffort != nil ||
+                    task.estimatedScore != nil {
+                    
+                    HStack {
+                        if let estimatedSize = task.estimatedSize {
+                            Label(estimatedSize, systemImage: "square.stack.3d.up")
+                        }
+                        
+                        if let estimatedEffort = task.estimatedEffort {
+                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                        }
+                        
+                        if let estimatedScore = task.estimatedScore {
+                            Label("\(estimatedScore)", systemImage: "star.fill")
+                        }
                     }
-
-                    if let estimatedEffort = task.estimatedEffort {
-                        Label("\(estimatedEffort)", systemImage: "bolt.fill")
-                    }
-
-                    if let estimatedScore = task.estimatedScore {
-                        Label("\(estimatedScore)", systemImage: "star.fill")
-                    }
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.12))
+                    .clipShape(Capsule())
                 }
-                .font(.caption.weight(.medium))
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.secondary.opacity(0.12))
-                .clipShape(Capsule())
             }
         }
         .padding(.vertical, 6)

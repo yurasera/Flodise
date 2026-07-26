@@ -57,7 +57,7 @@ struct EditTaskView: View {
 
                             Label("\(estimatorScore)", systemImage: "star.fill")
                         }
-                        .font(.body.weight(.medium))
+                        .font(.caption.weight(.medium))
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
                         .padding()
