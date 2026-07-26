@@ -69,6 +69,19 @@ struct EditTaskView: View {
                     Text("Move to Planned")
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
+            }else if task.status == .planned {
+                Button {
+                    task.status = .backlog
+
+                    do {
+                        try modelContext.save()
+                    } catch {
+                        print("Failed to update task status: \(error)")
+                    }
+                } label: {
+                    Text("Move to Active")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
             }
             
             HStack {
