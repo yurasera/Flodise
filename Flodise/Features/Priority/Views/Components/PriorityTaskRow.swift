@@ -57,6 +57,19 @@ struct PriorityTaskRow: View {
                     }
                 }
             }
+
+            if task.status == .planned, let estimatedSize = task.estimatedSize, let estimatedEffort = task.estimatedEffort {
+                HStack(spacing: 8) {
+                    Label(estimatedSize, systemImage: "square.stack.3d.up")
+                    Label("\(estimatedEffort)", systemImage: "bolt.fill")
+                }
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.secondary.opacity(0.12))
+                .clipShape(Capsule())
+            }
         }
         .padding(.vertical, 6)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {

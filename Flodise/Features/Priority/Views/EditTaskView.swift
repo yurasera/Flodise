@@ -71,14 +71,34 @@ struct EditTaskView: View {
                     .padding(.vertical, 4)
                 }
             }
-            if selectedStatus == .planned {
+            if selectedStatus == .idea {
                 Section("Task Estimator") {
                     VStack(alignment: .leading, spacing: 12) {
-                        estimatorToggle("Perlu Belajar?", isOn: $needToLearn)
-                        estimatorToggle("Belum Tahu Cara?", isOn: $dontKnowHow)
-                        estimatorToggle("Perlu Banyak Berpikir?", isOn: $needThinking)
-                        estimatorToggle("Perlu Banyak Langkah?", isOn: $manySteps)
-                        estimatorToggle("Butuh Fokus Penuh?", isOn: $needFullFocus)
+                        estimatorToggle(
+                            title: "Perlu Belajar?",
+                            subtitle: "Membutuhkan pengetahuan atau keterampilan baru.",
+                            isOn: $needToLearn
+                        )
+                        estimatorToggle(
+                            title: "Belum Tahu Cara?",
+                            subtitle: "Belum mengetahui langkah untuk menyelesaikannya.",
+                            isOn: $dontKnowHow
+                        )
+                        estimatorToggle(
+                            title: "Perlu Banyak Berpikir?",
+                            subtitle: "Memerlukan analisis atau pengambilan keputusan.",
+                            isOn: $needThinking
+                        )
+                        estimatorToggle(
+                            title: "Perlu Banyak Langkah?",
+                            subtitle: "Terdiri dari beberapa langkah atau subtask.",
+                            isOn: $manySteps
+                        )
+                        estimatorToggle(
+                            title: "Butuh Fokus Penuh?",
+                            subtitle: "Sulit dikerjakan sambil terdistraksi.",
+                            isOn: $needFullFocus
+                        )
 
                         Divider()
 
@@ -119,12 +139,6 @@ struct EditTaskView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
-            
-            HStack {
-                Text("\(dueDate)")
-                    .font(.caption)
-            }
-            .padding(.vertical, 4)
         }
         .navigationTitle("Edit Task")
         .navigationBarTitleDisplayMode(.inline)
@@ -186,8 +200,15 @@ private extension EditTaskView {
         }
     }
 
-    func estimatorToggle(_ title: String, isOn: Binding<Bool>) -> some View {
-        Toggle(title, isOn: isOn)
+    func estimatorToggle(title: String, subtitle: String, isOn: Binding<Bool>) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Toggle(title, isOn: isOn)
+
+            Text(subtitle)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.leading, 8)
+        }
     }
 
     func saveChanges() {
@@ -195,6 +216,7 @@ private extension EditTaskView {
         task.notes = notes
         task.status = selectedStatus
         task.priorityOrder = priorityOrder
+        persistEstimatorScoreIfNeeded(for: selectedStatus)
         syncIkigaiSelections()
 
         do {
@@ -229,6 +251,12 @@ private extension EditTaskView {
     }
     
     func updateTaskStatus(to newStatus: TaskStatus) {
+        if task.status == .planned && newStatus == .backlog {
+            persistEstimatorScoreIfNeeded(for: .planned)
+        } else {
+            persistEstimatorScoreIfNeeded(for: newStatus)
+        }
+
         task.status = newStatus
 
         do {
@@ -237,6 +265,19 @@ private extension EditTaskView {
         } catch {
             print("Failed to update task status: \(error)")
         }
+    }
+
+    func persistEstimatorScoreIfNeeded(for status: TaskStatus) {
+        guard status == .planned else {
+            task.estimatedScore = nil
+            task.estimatedSize = nil
+            task.estimatedEffort = nil
+            return
+        }
+
+        task.estimatedScore = estimatorScore
+        task.estimatedSize = estimatorSize
+        task.estimatedEffort = estimatorEffort
     }
 
 }

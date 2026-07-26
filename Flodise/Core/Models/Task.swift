@@ -15,6 +15,9 @@ final class Task {
     var notes: String
     var status: TaskStatus
     var priorityOrder: Int
+    var estimatedScore: Int?
+    var estimatedSize: String?
+    var estimatedEffort: Int?
     var createdAt: Date
     var focusStartedAt: Date?
     var completedAt: Date?
@@ -35,6 +38,9 @@ final class Task {
         self.category = category
         self.status = .idea
         self.priorityOrder = Int(Date().timeIntervalSince1970)
+        self.estimatedScore = nil
+        self.estimatedSize = nil
+        self.estimatedEffort = nil
         self.createdAt = .now
         self.focusStartedAt = nil
         self.completedAt = nil
