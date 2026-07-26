@@ -58,26 +58,14 @@ struct EditTaskView: View {
 
             if task.status == .idea {
                 Button {
-                    task.status = .planned
-
-                    do {
-                        try modelContext.save()
-                    } catch {
-                        print("Failed to update task status: \(error)")
-                    }
+                    updateTaskStatus(to: .planned)
                 } label: {
                     Text("Move to Planned")
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-            }else if task.status == .planned {
+            } else if task.status == .planned {
                 Button {
-                    task.status = .backlog
-
-                    do {
-                        try modelContext.save()
-                    } catch {
-                        print("Failed to update task status: \(error)")
-                    }
+                    updateTaskStatus(to: .backlog)
                 } label: {
                     Text("Move to Active")
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -143,6 +131,17 @@ private extension EditTaskView {
             selectedIkigai.remove(ikigai)
         } else {
             selectedIkigai.insert(ikigai)
+        }
+    }
+
+    func updateTaskStatus(to newStatus: TaskStatus) {
+        task.status = newStatus
+
+        do {
+            try modelContext.save()
+            dismiss()
+        } catch {
+            print("Failed to update task status: \(error)")
         }
     }
 }
