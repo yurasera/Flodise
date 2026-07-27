@@ -43,7 +43,7 @@ struct EditTaskView: View {
                 TextField("Notes", text: $notes, axis: .vertical)
                     .lineLimit(2...4)
             }
-            if selectedStatus == .idea || hasEstimatorValues {
+            if selectedStatus != .idea && hasEstimatorValues {
                 Section("Task Estimator") {
                     VStack(spacing: 12) {
                         HStack {
@@ -110,7 +110,7 @@ struct EditTaskView: View {
                     .padding(.vertical, 4)
                 }
             }
-            if selectedStatus == .idea {
+            if selectedStatus == .idea || selectedStatus == .backlog {
                 Section("Task Estimator") {
                     VStack(alignment: .leading, spacing: 12) {
                         estimatorToggle(
