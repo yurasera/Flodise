@@ -72,11 +72,11 @@ struct HomeHeroSection: View {
 }
 
 private struct StopPathView: View {
-    @State private var colorScheme: ColorScheme = .light
+    @State private var preferredColorScheme: ColorScheme = .dark
 
     var body: some View {
         VStack(spacing: 4) {
-            Text("STOP.")
+            Text("STOP!")
                 .font(.title.weight(.bold))
                 .multilineTextAlignment(.center)
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 16, trailing: 0))
@@ -86,7 +86,7 @@ private struct StopPathView: View {
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.primary)
 
-            Text("Istirahatkan pikiranmu.")
+            Text("Istirahat!!!")
                 .font(.title2.weight(.bold))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.primary)
@@ -95,15 +95,17 @@ private struct StopPathView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemBackground))
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(colorScheme)
+        .preferredColorScheme(preferredColorScheme)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    colorScheme = colorScheme == .dark ? .light : .dark
+                    preferredColorScheme = preferredColorScheme == .dark ? .light : .dark
                 } label: {
-                    Image(systemName: colorScheme == .dark ? "sun.max.fill" : "moon.fill")
+                    Image(systemName: preferredColorScheme == .dark ? "sun.max.fill" : "moon.fill")
                 }
-                .accessibilityLabel(colorScheme == .dark ? "Switch to Light Mode" : "Switch to Dark Mode")
+                .accessibilityLabel(
+                    preferredColorScheme == .dark ? "Switch to Light Mode" : "Switch to Dark Mode"
+                )
             }
         }
     }

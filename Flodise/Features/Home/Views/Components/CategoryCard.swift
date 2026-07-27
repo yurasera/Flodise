@@ -26,64 +26,61 @@ struct HomeCategoryCard: View {
     @State private var toggleTaskCompletionTrigger = 0
     
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.small) {
+        ZStack(alignment: .topTrailing) {
+            VStack(alignment: .leading, spacing: Spacing.small) {
+                HStack {
+                    Text(title)
+                        .font(.title3)
+                        .fontWeight(.bold)
 
-            HStack {
-                Text(title)
-                    .font(.title3)
-                    .fontWeight(.bold)
+                    Spacer()
 
-                Spacer()
-
-                if isCompleted {
-                    VStack(alignment: .trailing, spacing: 4) {
-                        Text("Lv. \(level)")
-                            .font(.caption2.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.white.opacity(0.18))
-                            .clipShape(Capsule())
-
+                    if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.title3)
                     }
-                } else {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        if let estimatedEffort = task?.estimatedEffort {
-                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
-                                .font(.caption2.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.white.opacity(0.18))
-                                .clipShape(Capsule())
-                        }
-                    }
                 }
-            }
 
-            Text(description)
-                .font(.caption)
+                Text(description)
+                    .font(.caption)
+            }
+            .frame(
+                maxWidth: .infinity,
+                minHeight: Metrics.cardHeight,
+                alignment: .leading
+            )
+            .padding(.horizontal, Spacing.medium)
+            .padding(.vertical, Spacing.small)
+            .background(
+                RoundedRectangle(cornerRadius: Spacing.medium)
+                    .fill(
+                        isCompleted
+                        ? background.opacity(0.5)
+                        : background
+                    )
+            )
+            .foregroundStyle(foreground)
+            .onTapGesture {
+                toggleTaskCompletion()
+            }
+            .sensoryFeedback(.impact(weight: .medium), trigger: toggleTaskCompletionTrigger)
+
+            if !isCompleted, let estimatedEffort = task?.estimatedEffort {
+                HStack(spacing: 4) {
+                    Image(systemName: "bolt.fill")
+                    Text("\(estimatedEffort)")
+                }
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(foreground)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.white.opacity(0.18))
+                .clipShape(Capsule())
+                .offset(x: 12, y: -6)
+                .padding(.top, Spacing.small)
+                .padding(.trailing, Spacing.medium)
+            }
         }
-        .frame(
-            maxWidth: .infinity,
-            minHeight: Metrics.cardHeight,
-            alignment: .leading
-        )
-        .padding(.horizontal, Spacing.medium)
-        .padding(.vertical, Spacing.small)
-        .background(
-            RoundedRectangle(cornerRadius: Spacing.medium)
-                .fill(
-                    isCompleted
-                    ? background.opacity(0.5)
-                    : background
-                )
-        )
-        .foregroundStyle(foreground)
-        .onTapGesture {
-            toggleTaskCompletion()
-        }
-        .sensoryFeedback(.impact(weight: .medium), trigger: toggleTaskCompletionTrigger)
     }
     
     private var isCompleted: Bool {
