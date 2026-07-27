@@ -110,7 +110,7 @@ struct EditTaskView: View {
                     .padding(.vertical, 4)
                 }
             }
-            if selectedStatus == .idea {
+            if selectedStatus == .idea || selectedStatus == .backlog {
                 Section("Task Estimator") {
                     VStack(alignment: .leading, spacing: 12) {
                         estimatorToggle(
