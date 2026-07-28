@@ -11,6 +11,7 @@ import SwiftData
 struct EditTaskView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query private var tasks: [Task]
 
     let task: Task
 
@@ -174,8 +175,15 @@ struct EditTaskView: View {
                 Button {
                     updateTaskStatus(to: .backlog)
                 } label: {
-                    Text("Move to Active")
-                        .frame(maxWidth: .infinity, alignment: .center)
+                    VStack(spacing: 4) {
+                        Text("Move to Active")
+                        if backlogEstimatedEffortTotal > 0 {
+                            Text("Active Effort Total: \(backlogEstimatedEffortTotal)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
         }
@@ -202,6 +210,13 @@ struct EditTaskView: View {
 private extension EditTaskView {
     var hasEstimatorValues: Bool {
         task.estimatedScore != nil || task.estimatedSize != nil || task.estimatedEffort != nil
+    }
+
+    var backlogEstimatedEffortTotal: Int {
+        tasks
+            .filter { $0.status == .backlog }
+            .compactMap(\.estimatedEffort)
+            .reduce(0, +)
     }
 
     func applyEstimatorState() {
