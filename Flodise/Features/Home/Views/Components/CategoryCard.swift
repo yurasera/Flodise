@@ -103,7 +103,7 @@ struct HomeCategoryCard: View {
             } else {
                 task.status = .completed
                 task.completedAt = .now
-                energy = max(0, energy - (effortMultiplier * 1))
+                energy = energy - (effortMultiplier * 1)
                 globalExp += effortMultiplier * 10
                 while globalExp >= 100 {
                     globalExp -= 100
