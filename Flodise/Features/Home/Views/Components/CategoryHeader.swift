@@ -10,6 +10,8 @@ import SwiftUI
 struct HomeCategoryHeader: View {
     let title: String
     let color: Color
+    let level: Int
+    let exp: Int
     let action: () -> Void
     
     var body: some View {
@@ -22,6 +24,12 @@ struct HomeCategoryHeader: View {
                 Text(title == "Current" ? "Engineer" : title == "Alternative" ? "Educator" : title == "Dream" ? "Builder" : title)
                     .font(.caption)
                     .foregroundStyle(color)
+                HStack(spacing: 8) {
+                    Label("Lv \(level)", systemImage: "sparkles")
+                    Text("EXP \(exp)/100")
+                }
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(color.opacity(0.9))
             }
             
             Spacer()

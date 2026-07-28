@@ -25,6 +25,24 @@ final class HomeViewModel {
     var exp = 0 {
         didSet { saveProgress() }
     }
+    var currentLevel = 1 {
+        didSet { saveCategoryProgress() }
+    }
+    var currentExp = 0 {
+        didSet { saveCategoryProgress() }
+    }
+    var alternativeLevel = 1 {
+        didSet { saveCategoryProgress() }
+    }
+    var alternativeExp = 0 {
+        didSet { saveCategoryProgress() }
+    }
+    var dreamLevel = 1 {
+        didSet { saveCategoryProgress() }
+    }
+    var dreamExp = 0 {
+        didSet { saveCategoryProgress() }
+    }
     
     private var modelContext: ModelContext?
     private let defaults = UserDefaults.standard
@@ -32,6 +50,12 @@ final class HomeViewModel {
     private let energyKey = "homeEnergy"
     private let levelKey = "homeLevel"
     private let expKey = "homeExp"
+    private let currentLevelKey = "homeCurrentLevel"
+    private let currentExpKey = "homeCurrentExp"
+    private let alternativeLevelKey = "homeAlternativeLevel"
+    private let alternativeExpKey = "homeAlternativeExp"
+    private let dreamLevelKey = "homeDreamLevel"
+    private let dreamExpKey = "homeDreamExp"
     private var energyResetTimer: Timer?
     
     // MARK: - Initialization
@@ -118,6 +142,29 @@ final class HomeViewModel {
         }
     }
 
+    func gainCategoryExp(for category: CategoryKind, amount: Int) {
+        switch category {
+        case .current:
+            currentExp += amount
+            while currentExp >= 100 {
+                currentExp -= 100
+                currentLevel += 1
+            }
+        case .alternative:
+            alternativeExp += amount
+            while alternativeExp >= 100 {
+                alternativeExp -= 100
+                alternativeLevel += 1
+            }
+        case .dream:
+            dreamExp += amount
+            while dreamExp >= 100 {
+                dreamExp -= 100
+                dreamLevel += 1
+            }
+        }
+    }
+
     func ensureDailyEnergyReset() {
         let now = Date()
         let calendar = Calendar.current
@@ -142,6 +189,15 @@ final class HomeViewModel {
         defaults.set(level, forKey: levelKey)
         defaults.set(exp, forKey: expKey)
     }
+
+    func saveCategoryProgress() {
+        defaults.set(currentLevel, forKey: currentLevelKey)
+        defaults.set(currentExp, forKey: currentExpKey)
+        defaults.set(alternativeLevel, forKey: alternativeLevelKey)
+        defaults.set(alternativeExp, forKey: alternativeExpKey)
+        defaults.set(dreamLevel, forKey: dreamLevelKey)
+        defaults.set(dreamExp, forKey: dreamExpKey)
+    }
     
     private func save() {
         do {
@@ -155,6 +211,12 @@ final class HomeViewModel {
         let savedEnergy = defaults.object(forKey: energyKey) as? Int
         let savedLevel = defaults.object(forKey: levelKey) as? Int
         let savedExp = defaults.object(forKey: expKey) as? Int
+        let savedCurrentLevel = defaults.object(forKey: currentLevelKey) as? Int
+        let savedCurrentExp = defaults.object(forKey: currentExpKey) as? Int
+        let savedAlternativeLevel = defaults.object(forKey: alternativeLevelKey) as? Int
+        let savedAlternativeExp = defaults.object(forKey: alternativeExpKey) as? Int
+        let savedDreamLevel = defaults.object(forKey: dreamLevelKey) as? Int
+        let savedDreamExp = defaults.object(forKey: dreamExpKey) as? Int
 
         if let savedEnergy {
             energy = min(max(0, savedEnergy), 10)
@@ -166,6 +228,25 @@ final class HomeViewModel {
 
         if let savedExp {
             exp = min(max(0, savedExp), 99)
+        }
+
+        if let savedCurrentLevel {
+            currentLevel = max(1, savedCurrentLevel)
+        }
+        if let savedCurrentExp {
+            currentExp = min(max(0, savedCurrentExp), 99)
+        }
+        if let savedAlternativeLevel {
+            alternativeLevel = max(1, savedAlternativeLevel)
+        }
+        if let savedAlternativeExp {
+            alternativeExp = min(max(0, savedAlternativeExp), 99)
+        }
+        if let savedDreamLevel {
+            dreamLevel = max(1, savedDreamLevel)
+        }
+        if let savedDreamExp {
+            dreamExp = min(max(0, savedDreamExp), 99)
         }
     }
 

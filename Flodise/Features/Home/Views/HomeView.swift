@@ -42,6 +42,12 @@ struct HomeView: View {
                         energy: $viewModel.energy,
                         level: $viewModel.level,
                         exp: $viewModel.exp,
+                        currentLevel: $viewModel.currentLevel,
+                        currentExp: $viewModel.currentExp,
+                        alternativeLevel: $viewModel.alternativeLevel,
+                        alternativeExp: $viewModel.alternativeExp,
+                        dreamLevel: $viewModel.dreamLevel,
+                        dreamExp: $viewModel.dreamExp,
                         isCurrentVisible: $viewModel.isCurrentVisible,
                         isAlternativeVisible: $viewModel.isAlternativeVisible,
                         isDreamVisible: $viewModel.isDreamVisible

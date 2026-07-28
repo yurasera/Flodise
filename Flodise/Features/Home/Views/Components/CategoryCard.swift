@@ -16,8 +16,10 @@ struct HomeCategoryCard: View {
     let foreground: Color
     var task: Task?
     @Binding var energy: Int
-    @Binding var level: Int
-    @Binding var exp: Int
+    @Binding var globalLevel: Int
+    @Binding var globalExp: Int
+    @Binding var categoryLevel: Int
+    @Binding var categoryExp: Int
     
     @Environment(\.modelContext) private var modelContext
     
@@ -96,15 +98,22 @@ struct HomeCategoryCard: View {
                 task.status = .backlog
                 task.completedAt = nil
                 energy = min(10, energy + effortMultiplier * 1)
-                exp = max(0, exp - (effortMultiplier * 10))
+                globalExp = max(0, globalExp - (effortMultiplier * 10))
+                categoryExp = max(0, categoryExp - (effortMultiplier * 10))
             } else {
                 task.status = .completed
                 task.completedAt = .now
                 energy = max(0, energy - (effortMultiplier * 1))
-                exp += effortMultiplier * 10
-                while exp >= 100 {
-                    exp -= 100
-                    level += 1
+                globalExp += effortMultiplier * 10
+                while globalExp >= 100 {
+                    globalExp -= 100
+                    globalLevel += 1
+                }
+
+                categoryExp += effortMultiplier * 10
+                while categoryExp >= 100 {
+                    categoryExp -= 100
+                    categoryLevel += 1
                 }
             }
             toggleTaskCompletionTrigger += 1

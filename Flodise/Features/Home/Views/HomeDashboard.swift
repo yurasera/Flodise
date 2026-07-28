@@ -16,6 +16,12 @@ struct HomeDashboard: View {
     @Binding var energy: Int
     @Binding var level: Int
     @Binding var exp: Int
+    @Binding var currentLevel: Int
+    @Binding var currentExp: Int
+    @Binding var alternativeLevel: Int
+    @Binding var alternativeExp: Int
+    @Binding var dreamLevel: Int
+    @Binding var dreamExp: Int
     
     @Binding var isCurrentVisible: Bool
     @Binding var isAlternativeVisible: Bool
@@ -27,7 +33,15 @@ struct HomeDashboard: View {
             VStack(spacing: 0) {
                 HomeHeroSection(categories: categories, energy: energy, level: level, exp: exp)
                 if isCurrentVisible {
-                    HomeCategorySection(category: .current, tasks: currentTasks, energy: $energy, level: $level, exp: $exp)
+                    HomeCategorySection(
+                        category: .current,
+                        tasks: currentTasks,
+                        energy: $energy,
+                        globalLevel: $level,
+                        globalExp: $exp,
+                        categoryLevel: $currentLevel,
+                        categoryExp: $currentExp
+                    )
                 }
                 HomeStatusSection(
                     currentCount: currentTasks.count,
@@ -43,10 +57,26 @@ struct HomeDashboard: View {
             VStack(spacing: 0) {
                 if isAlternativeVisible {
                     Spacer()
-                    HomeCategorySection(category: .alternative, tasks: alternativeTasks, energy: $energy, level: $level, exp: $exp)
+                    HomeCategorySection(
+                        category: .alternative,
+                        tasks: alternativeTasks,
+                        energy: $energy,
+                        globalLevel: $level,
+                        globalExp: $exp,
+                        categoryLevel: $alternativeLevel,
+                        categoryExp: $alternativeExp
+                    )
                 }
                 if isDreamVisible {
-                    HomeCategorySection(category: .dream, tasks: dreamTasks, energy: $energy, level: $level, exp: $exp)
+                    HomeCategorySection(
+                        category: .dream,
+                        tasks: dreamTasks,
+                        energy: $energy,
+                        globalLevel: $level,
+                        globalExp: $exp,
+                        categoryLevel: $dreamLevel,
+                        categoryExp: $dreamExp
+                    )
                 }
             }
         }
