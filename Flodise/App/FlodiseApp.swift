@@ -42,6 +42,8 @@ struct FlodiseApp: App {
             pomodoroManager.restoreStateIfNeeded()
         case .background:
             pomodoroManager.saveStateWhenEnteringBackground()
+        case .inactive:
+            break
         @unknown default:
             break
         }

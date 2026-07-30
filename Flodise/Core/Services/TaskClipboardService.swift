@@ -15,10 +15,10 @@ struct TaskClipboardService {
 
     init(
         formatter: TaskClipboardFormatter = TaskClipboardFormatter(),
-        pasteboard: UIPasteboard = .general
+        pasteboard: UIPasteboard? = nil
     ) {
         self.formatter = formatter
-        self.pasteboard = pasteboard
+        self.pasteboard = pasteboard ?? .general
     }
 
     func copy(_ tasks: [Task]) {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeCategorySection: View {
     let category: CategoryKind
+    let categoryModel: Category?
     let tasks: [Task]
     @Binding var energy: Int
     @Binding var globalLevel: Int
@@ -23,9 +24,11 @@ struct HomeCategorySection: View {
             VStack(alignment: .leading, spacing: Spacing.small) {
                 HomeCategoryHeader(
                     title: category.title,
+                    subtitle: categoryModel?.displaySubtitle ?? Category.defaultSubtitle(for: category.title),
                     color: category.headerColor,
                     level: categoryLevel,
-                    exp: categoryExp
+                    exp: categoryExp,
+                    editableCategory: categoryModel
                 ) {
                     isPresentingAddTask = true
                 }

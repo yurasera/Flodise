@@ -223,10 +223,7 @@ final class PomodoroManager {
         }
         
         // Restore state
-        if let startDateData = defaults.object(forKey: startDateKey) as? Date,
-           let duration = defaults.object(forKey: durationKey) as? TimeInterval,
-           let isRunningData = defaults.bool(forKey: isRunningKey) as? Bool,
-           isRunningData {
+        if defaults.bool(forKey: isRunningKey) {
             
             isRunning = true
             remainingTime = endDate.timeIntervalSince(now)

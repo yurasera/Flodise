@@ -33,4 +33,25 @@ extension Color {
     // Text
     static let textPrimary = Color.white
     static let textSecondary = Color.white.opacity(0.7)
+
+    // Adaptive system colors
+    static var adaptiveBackground: Color {
+        Color(uiColor: .systemBackground)
+    }
+
+    static var adaptiveSurface: Color {
+        Color(uiColor: .secondarySystemBackground)
+    }
+
+    static var adaptiveTextPrimary: Color {
+        Color(uiColor: .label)
+    }
+
+    static var adaptiveTextSecondary: Color {
+        Color(uiColor: .secondaryLabel)
+    }
+
+    static var adaptiveSeparator: Color {
+        Color(uiColor: .separator)
+    }
 }

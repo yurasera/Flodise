@@ -35,6 +35,7 @@ struct HomeDashboard: View {
                 if isCurrentVisible {
                     HomeCategorySection(
                         category: .current,
+                        categoryModel: categoryModel(for: .current),
                         tasks: currentTasks,
                         energy: $energy,
                         globalLevel: $level,
@@ -59,6 +60,7 @@ struct HomeDashboard: View {
                     Spacer()
                     HomeCategorySection(
                         category: .alternative,
+                        categoryModel: categoryModel(for: .alternative),
                         tasks: alternativeTasks,
                         energy: $energy,
                         globalLevel: $level,
@@ -70,6 +72,7 @@ struct HomeDashboard: View {
                 if isDreamVisible {
                     HomeCategorySection(
                         category: .dream,
+                        categoryModel: categoryModel(for: .dream),
                         tasks: dreamTasks,
                         energy: $energy,
                         globalLevel: $level,
@@ -80,5 +83,9 @@ struct HomeDashboard: View {
                 }
             }
         }
+    }
+    
+    private func categoryModel(for kind: CategoryKind) -> Category? {
+        categories.first { $0.name == kind.title }
     }
 }
