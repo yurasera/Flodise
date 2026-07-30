@@ -171,7 +171,21 @@ struct EditTaskView: View {
                     Text("Move to Planned")
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-            } else if task.status == .planned {
+            }else if task.status == .backlog {
+                Button {
+                    updateTaskStatus(to: .planned)
+                } label: {
+                    VStack(spacing: 4) {
+                        Text("Move to Planned")
+                        if backlogEstimatedEffortTotal > 0 {
+                            Text("Active Effort Total: \(backlogEstimatedEffortTotal)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                }
+            }else if task.status == .planned {
                 Button {
                     updateTaskStatus(to: .backlog)
                 } label: {
