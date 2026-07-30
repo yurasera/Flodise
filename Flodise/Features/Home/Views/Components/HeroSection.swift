@@ -41,8 +41,13 @@ struct HomeHeroSection: View {
                                 .monospacedDigit()
                         }
 
-                        ProgressView(value: Double(energy), total: 10)
-                            .tint(.yellow)
+                        if energy >= 0 {
+                            ProgressView(value: Double(energy), total: 10)
+                                .tint(.yellow)
+                        } else {
+                            ProgressView(value: Double(abs(energy)), total: 10)
+                                .tint(.red)
+                        }
                     }
 
                     VStack(alignment: .leading, spacing: 4) {
