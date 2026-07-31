@@ -39,6 +39,7 @@ struct HomeStatusSection: View {
 
     var body: some View {
         VStack {
+            Spacer()
             VStack(spacing: Spacing.medium) {
                 HStack(spacing: Spacing.large) {
                     // Current
@@ -89,7 +90,7 @@ struct HomeActionBar: View {
             HomeActionButton(
                 title: "Set Priority",
                 systemImage: "flag.fill",
-                foregroundColor: Color.brandTertiary,
+                foregroundColor: Color.brandSecondary,
                 tintColor: Color.brandPrimary
             ) {
                 priorityPresentationTrigger += 1
@@ -132,6 +133,6 @@ private struct HomeActionButton: View {
             }
             .tint(tintColor ?? foregroundColor)
         }
-        .padding()
+        .padding(4)
     }
 }
