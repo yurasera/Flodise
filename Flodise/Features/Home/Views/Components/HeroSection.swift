@@ -76,7 +76,7 @@ struct HomeHeroSection: View {
     }
 }
 
-private struct StopPathView: View {
+struct StopPathView: View {
     @State private var preferredColorScheme: ColorScheme = .dark
 
     var body: some View {

@@ -10,6 +10,8 @@ struct HomeStatusSection: View {
     let currentCount: Int
     let alternativeCount: Int
     let dreamCount: Int
+    @Binding var isPresentingPriorityTasks: Bool
+    let startFocusAction: () -> Void
 
     @Binding var isCurrentVisible: Bool
     @Binding var isAlternativeVisible: Bool
@@ -19,6 +21,8 @@ struct HomeStatusSection: View {
         currentCount: Int = 0,
         alternativeCount: Int = 0,
         dreamCount: Int = 0,
+        isPresentingPriorityTasks: Binding<Bool>,
+        startFocusAction: @escaping () -> Void,
         isCurrentVisible: Binding<Bool>,
         isAlternativeVisible: Binding<Bool>,
         isDreamVisible: Binding<Bool>
@@ -26,6 +30,8 @@ struct HomeStatusSection: View {
         self.currentCount = currentCount
         self.alternativeCount = alternativeCount
         self.dreamCount = dreamCount
+        _isPresentingPriorityTasks = isPresentingPriorityTasks
+        self.startFocusAction = startFocusAction
         _isCurrentVisible = isCurrentVisible
         _isAlternativeVisible = isAlternativeVisible
         _isDreamVisible = isDreamVisible
@@ -33,7 +39,6 @@ struct HomeStatusSection: View {
 
     var body: some View {
         VStack {
-            Spacer()
             VStack(spacing: Spacing.medium) {
                 HStack(spacing: Spacing.large) {
                     // Current
@@ -60,10 +65,73 @@ struct HomeStatusSection: View {
                     }
                     .buttonStyle(.plain)
                 }
+
+                HomeActionBar(
+                    isPresentingPriorityTasks: $isPresentingPriorityTasks,
+                    startFocusAction: startFocusAction
+                )
             }
             Spacer()
         }
         .frame(maxWidth: .infinity)
         .background(Color.brandPrimary)
+    }
+}
+
+struct HomeActionBar: View {
+    @Binding var isPresentingPriorityTasks: Bool
+    let startFocusAction: () -> Void
+
+    @State private var priorityPresentationTrigger = 0
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HomeActionButton(
+                title: "Set Priority",
+                systemImage: "flag.fill",
+                foregroundColor: Color.brandTertiary,
+                tintColor: Color.brandPrimary
+            ) {
+                priorityPresentationTrigger += 1
+                isPresentingPriorityTasks = true
+            }
+
+            HomeActionButton(
+                title: "Start Focus",
+                systemImage: "timer",
+                foregroundColor: Color.brandPrimary
+            ) {
+                priorityPresentationTrigger += 1
+                startFocusAction()
+            }
+        }
+        .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
+    }
+}
+
+private struct HomeActionButton: View {
+    let title: String
+    let systemImage: String
+    let foregroundColor: Color
+    var tintColor: Color?
+    let action: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button(action: action) {
+                HStack {
+                    Image(systemName: systemImage)
+                    Text(title)
+                }
+                .font(.headline)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .foregroundStyle(foregroundColor)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .glassEffect()
+            }
+            .tint(tintColor ?? foregroundColor)
+        }
+        .padding()
     }
 }

@@ -16,6 +16,7 @@ struct HomeView: View {
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
 
     @State private var viewModel: HomeViewModel
+    @State private var homeMenuDestination: HomeMenuDestination?
 
     // Initialize ViewModel with modelContext
     init(modelContext: ModelContext) {
@@ -48,22 +49,46 @@ struct HomeView: View {
                         alternativeExp: $viewModel.alternativeExp,
                         dreamLevel: $viewModel.dreamLevel,
                         dreamExp: $viewModel.dreamExp,
+                        isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
+                        startFocusAction: { viewModel.startFocus(tasks: tasks) },
                         isCurrentVisible: $viewModel.isCurrentVisible,
                         isAlternativeVisible: $viewModel.isAlternativeVisible,
                         isDreamVisible: $viewModel.isDreamVisible
-                    )
-
-                    HomeActionBar(
-                        isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
-                        startFocusAction: { viewModel.startFocus(tasks: tasks) }
                     )
                 }
             }
             .ignoresSafeArea()
         }
+        .navigationDestination(item: $homeMenuDestination) { destination in
+            switch destination {
+            case .odyssey:
+                StopPathView()
+            case .discovery:
+                DiscoveryView()
+            }
+        }
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
             NavigationStack {
                 PriorityView(tasks: tasks)
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                Menu {
+                    Button {
+                        homeMenuDestination = .odyssey
+                    } label: {
+                        Label("Odyssey", systemImage: "triangle.fill")
+                    }
+
+                    Button {
+                        homeMenuDestination = .discovery
+                    } label: {
+                        Label("Discovery", systemImage: "sparkles")
+                    }
+                } label: {
+                    Label("Navigate", systemImage: "square.grid.2x2")
+                }
             }
         }
         .onAppear {
@@ -75,6 +100,13 @@ struct HomeView: View {
     private func stopFocus() {
         viewModel.stopFocus(tasks: tasks)
     }
+}
+
+private enum HomeMenuDestination: Hashable, Identifiable {
+    case odyssey
+    case discovery
+
+    var id: Self { self }
 }
 
 #Preview {

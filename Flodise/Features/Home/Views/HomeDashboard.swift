@@ -22,6 +22,8 @@ struct HomeDashboard: View {
     @Binding var alternativeExp: Int
     @Binding var dreamLevel: Int
     @Binding var dreamExp: Int
+    @Binding var isPresentingPriorityTasks: Bool
+    let startFocusAction: () -> Void
     
     @Binding var isCurrentVisible: Bool
     @Binding var isAlternativeVisible: Bool
@@ -48,6 +50,8 @@ struct HomeDashboard: View {
                     currentCount: currentTasks.count,
                     alternativeCount: alternativeTasks.count,
                     dreamCount: dreamTasks.count,
+                    isPresentingPriorityTasks: $isPresentingPriorityTasks,
+                    startFocusAction: startFocusAction,
                     isCurrentVisible: $isCurrentVisible,
                     isAlternativeVisible: $isAlternativeVisible,
                     isDreamVisible: $isDreamVisible
