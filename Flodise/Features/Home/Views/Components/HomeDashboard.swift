@@ -57,7 +57,7 @@ struct HomeDashboard: View {
                     isDreamVisible: $isDreamVisible
                 )
             }
-            .padding(.top, 32)
+            .padding(.top, 36)
             .frame(maxHeight: .infinity, alignment: .top)
             
             // Right side: 2 vertical sections

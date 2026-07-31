@@ -21,24 +21,38 @@ struct AppRootView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    HStack {
-                        Button {
-                            selectedPage = .home
-                        } label: {
-                            Label("Home", systemImage: "house.fill")
-                                .foregroundStyle(selectedPage == .home ? Color.brandPrimary : .secondary)
-                        }
-                        .buttonStyle(.plain)
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button {
+                        selectedPage = .home
+                    } label: {
+                        VStack(spacing: 2) {
+                            Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
+                                .font(.system(size: 16, weight: .medium))
 
-                        Button {
-                            selectedPage = .discovery
-                        } label: {
-                            Label("Discovery", systemImage: "sparkles")
-                                .foregroundStyle(selectedPage == .discovery ? Color.brandPrimary : .secondary)
+                            Text("Odyssey")
+                                .font(.caption2)
                         }
-                        .buttonStyle(.plain)
+                        .frame(minWidth: 32)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
                     }
+                    .tint(selectedPage == .home ? .accentColor : .secondary)
+
+                    Button {
+                        selectedPage = .discovery
+                    } label: {
+                        VStack(spacing: 2) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 16, weight: .medium))
+
+                            Text("Discovery")
+                                .font(.caption2)
+                        }
+                        .frame(minWidth: 32)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                    }
+                    .tint(selectedPage == .discovery ? .accentColor : .secondary)
                 }
             }
         }
