@@ -69,7 +69,7 @@ struct HomeStatusSection: View {
                     .buttonStyle(.plain)
                 }
 
-                HomeActionBar(
+                StatusActionBar(
                     isPresentingPriorityTasks: $isPresentingPriorityTasks,
                     startFocusAction: startFocusAction
                 )

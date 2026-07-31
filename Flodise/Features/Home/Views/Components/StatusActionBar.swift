@@ -1,12 +1,12 @@
 //
-//  HomeActionBar.swift
+//  StatusActionBar.swift
 //  Flodise
 //
 //  Created by Yuhaya Lissera on 31/07/26.
 //
 import SwiftUI
 
-struct HomeActionBar: View {
+struct StatusActionBar: View {
     @Binding var isPresentingPriorityTasks: Bool
     let startFocusAction: () -> Void
 

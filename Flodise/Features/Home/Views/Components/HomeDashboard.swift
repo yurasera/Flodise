@@ -32,7 +32,7 @@ struct HomeDashboard: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left side: 3 vertical sections
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 HomeHeroSection(categories: categories, energy: energy, level: level, exp: exp)
                 if isCurrentVisible {
                     HomeCategorySection(
@@ -57,6 +57,8 @@ struct HomeDashboard: View {
                     isDreamVisible: $isDreamVisible
                 )
             }
+            .padding(.top, 32)
+            .frame(maxHeight: .infinity, alignment: .top)
             
             // Right side: 2 vertical sections
             VStack(spacing: 0) {

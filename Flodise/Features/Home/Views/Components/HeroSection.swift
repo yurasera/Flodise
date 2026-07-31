@@ -14,7 +14,6 @@ struct HomeHeroSection: View {
     let exp: Int
     var body: some View {
         VStack {
-            Spacer()
             VStack(alignment: .leading, spacing: Spacing.small) {
                 NavigationLink {
                     StopPathView()
@@ -70,7 +69,6 @@ struct HomeHeroSection: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .foregroundColor(.white)
             .padding()
-            Spacer()
         }
         .frame(maxWidth: .infinity)
         .background(Color.brandPrimary)
