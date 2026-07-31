@@ -16,7 +16,6 @@ struct HomeView: View {
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
 
     @State private var viewModel: HomeViewModel
-    @State private var navigationPath: [HomeMenuDestination] = []
 
     // Initialize ViewModel with modelContext
     init(modelContext: ModelContext) {
@@ -30,62 +29,33 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack(path: $navigationPath) {
-            VStack(spacing: 0) {
-                if let focusTask = viewModel.focusTask(from: tasks) {
-                    FocusView(task: focusTask, stopFocus: stopFocus)
-                } else {
-                    HomeDashboard(
-                        categories: categories,
-                        currentTasks: viewModel.currentTasks(from: tasks),
-                        alternativeTasks: viewModel.alternativeTasks(from: tasks),
-                        dreamTasks: viewModel.dreamTasks(from: tasks),
-                        energy: $viewModel.energy,
-                        level: $viewModel.level,
-                        exp: $viewModel.exp,
-                        currentLevel: $viewModel.currentLevel,
-                        currentExp: $viewModel.currentExp,
-                        alternativeLevel: $viewModel.alternativeLevel,
-                        alternativeExp: $viewModel.alternativeExp,
-                        dreamLevel: $viewModel.dreamLevel,
-                        dreamExp: $viewModel.dreamExp,
-                        isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
-                        startFocusAction: { viewModel.startFocus(tasks: tasks) },
-                        isCurrentVisible: $viewModel.isCurrentVisible,
-                        isAlternativeVisible: $viewModel.isAlternativeVisible,
-                        isDreamVisible: $viewModel.isDreamVisible
-                    )
-                }
-            }
-            .ignoresSafeArea()
-            .navigationDestination(for: HomeMenuDestination.self) { destination in
-                switch destination {
-                case .odyssey:
-                    StopPathView()
-                case .discovery:
-                    DiscoveryView()
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    Menu {
-                        Button {
-                            navigationPath.append(.odyssey)
-                        } label: {
-                            Label("Odyssey", systemImage: "triangle.fill")
-                        }
-
-                        Button {
-                            navigationPath.append(.discovery)
-                        } label: {
-                            Label("Discovery", systemImage: "sparkles")
-                        }
-                    } label: {
-                        Label("Navigate", systemImage: "square.grid.2x2")
-                    }
-                }
+        VStack(spacing: 0) {
+            if let focusTask = viewModel.focusTask(from: tasks) {
+                FocusView(task: focusTask, stopFocus: stopFocus)
+            } else {
+                HomeDashboard(
+                    categories: categories,
+                    currentTasks: viewModel.currentTasks(from: tasks),
+                    alternativeTasks: viewModel.alternativeTasks(from: tasks),
+                    dreamTasks: viewModel.dreamTasks(from: tasks),
+                    energy: $viewModel.energy,
+                    level: $viewModel.level,
+                    exp: $viewModel.exp,
+                    currentLevel: $viewModel.currentLevel,
+                    currentExp: $viewModel.currentExp,
+                    alternativeLevel: $viewModel.alternativeLevel,
+                    alternativeExp: $viewModel.alternativeExp,
+                    dreamLevel: $viewModel.dreamLevel,
+                    dreamExp: $viewModel.dreamExp,
+                    isPresentingPriorityTasks: $viewModel.isPresentingPriorityTasks,
+                    startFocusAction: { viewModel.startFocus(tasks: tasks) },
+                    isCurrentVisible: $viewModel.isCurrentVisible,
+                    isAlternativeVisible: $viewModel.isAlternativeVisible,
+                    isDreamVisible: $viewModel.isDreamVisible
+                )
             }
         }
+        .ignoresSafeArea()
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
             NavigationStack {
                 PriorityView(tasks: tasks)
@@ -100,11 +70,6 @@ struct HomeView: View {
     private func stopFocus() {
         viewModel.stopFocus(tasks: tasks)
     }
-}
-
-private enum HomeMenuDestination: Hashable {
-    case odyssey
-    case discovery
 }
 
 #Preview {
