@@ -142,6 +142,7 @@ enum CareerPathData {
 @Observable
 final class CareerExplorationStore {
     private(set) var shortlistedIDs: Set<String> = []
+    private(set) var worthExploringFurtherIDs: Set<String> = []
     private(set) var curiosity: [String: CareerCuriosity] = [:]
 
     func isShortlisted(_ career: CareerPath) -> Bool {
@@ -151,8 +152,21 @@ final class CareerExplorationStore {
     func toggleShortlist(_ career: CareerPath) {
         if isShortlisted(career) {
             shortlistedIDs.remove(career.id)
+            worthExploringFurtherIDs.remove(career.id)
         } else {
             shortlistedIDs.insert(career.id)
+        }
+    }
+
+    func isWorthExploringFurther(_ career: CareerPath) -> Bool {
+        worthExploringFurtherIDs.contains(career.id)
+    }
+
+    func toggleWorthExploringFurther(_ career: CareerPath) {
+        if isWorthExploringFurther(career) {
+            worthExploringFurtherIDs.remove(career.id)
+        } else {
+            worthExploringFurtherIDs.insert(career.id)
         }
     }
 

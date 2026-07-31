@@ -34,13 +34,6 @@ struct HomeCategoryCard: View {
                     Text(title)
                         .font(.title3)
                         .fontWeight(.bold)
-
-                    Spacer()
-
-                    if isCompleted {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.title3)
-                    }
                 }
 
                 Text(description)
@@ -68,19 +61,24 @@ struct HomeCategoryCard: View {
             .sensoryFeedback(.impact(weight: .medium), trigger: toggleTaskCompletionTrigger)
 
             if !isCompleted, let estimatedEffort = task?.estimatedEffort {
-                HStack(spacing: 4) {
+                HStack(spacing: 2) {
                     Image(systemName: "bolt.fill")
                     Text("\(estimatedEffort)")
+                        .padding(.trailing, 4)
+                        .padding(.vertical, 4)
+                        
                 }
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(foreground)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(Color.white.opacity(0.18))
-                .clipShape(Capsule())
-                .offset(x: 12, y: -6)
+                .offset(x: 10, y: -6)
                 .padding(.top, Spacing.small)
                 .padding(.trailing, Spacing.medium)
+            }else{
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.caption2.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .foregroundStyle(foreground)
             }
         }
     }

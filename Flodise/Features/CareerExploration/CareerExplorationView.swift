@@ -114,49 +114,69 @@ private struct ExploreMoreSection: View {
     @Binding var selectedCategory: CareerCategory?
     let discoveryStore: DiscoveryStore
     let careerStore: CareerExplorationStore
+    @State private var isExploreMoreExpanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.medium) {
-            Text("Explore More")
-                .font(.title2.weight(.bold))
+            Button {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isExploreMoreExpanded.toggle()
+                }
+            } label: {
+                HStack {
+                    Text("Explore More")
+                        .font(.title2.weight(.bold))
 
-            HStack(spacing: Spacing.small) {
-                Image(systemName: "magnifyingglass")
-                    .foregroundStyle(Color.adaptiveTextSecondary)
-                TextField("Search career paths", text: $searchText)
-                    .textInputAutocapitalization(.never)
+                    Spacer()
+
+                    Image(systemName: isExploreMoreExpanded
+                          ? "chevron.up"
+                          : "chevron.down")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .foregroundStyle(Color.adaptiveTextPrimary)
             }
-            .padding(.horizontal, Spacing.medium)
-            .padding(.vertical, 12)
-            .background(Color.adaptiveSurface)
-            .clipShape(RoundedRectangle(cornerRadius: Spacing.medium, style: .continuous))
+            .buttonStyle(.plain)
 
-            ScrollView(.horizontal, showsIndicators: false) {
+            if isExploreMoreExpanded {
                 HStack(spacing: Spacing.small) {
-                    CategoryChip(title: "All", isSelected: selectedCategory == nil) {
-                        selectedCategory = nil
-                    }
-                    ForEach(CareerCategory.allCases) { category in
-                        CategoryChip(title: category.rawValue, isSelected: selectedCategory == category) {
-                            selectedCategory = category
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(Color.adaptiveTextSecondary)
+                    TextField("Search career paths", text: $searchText)
+                        .textInputAutocapitalization(.never)
+                }
+                .padding(.horizontal, Spacing.medium)
+                .padding(.vertical, 12)
+                .background(Color.adaptiveSurface)
+                .clipShape(RoundedRectangle(cornerRadius: Spacing.medium, style: .continuous))
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: Spacing.small) {
+                        CategoryChip(title: "All", isSelected: selectedCategory == nil) {
+                            selectedCategory = nil
+                        }
+                        ForEach(CareerCategory.allCases) { category in
+                            CategoryChip(title: category.rawValue, isSelected: selectedCategory == category) {
+                                selectedCategory = category
+                            }
                         }
                     }
                 }
-            }
-
-            if careers.isEmpty {
-                Text("No career paths match this search yet.")
-                    .font(.subheadline)
-                    .foregroundStyle(Color.adaptiveTextSecondary)
-                    .padding(.vertical, Spacing.medium)
-            } else {
-                ForEach(careers) { career in
-                    CareerPathCard(
-                        career: career,
-                        label: "Explore",
-                        discoveryStore: discoveryStore,
-                        careerStore: careerStore
-                    )
+                
+                if careers.isEmpty {
+                    Text("No career paths match this search yet.")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.adaptiveTextSecondary)
+                        .padding(.vertical, Spacing.medium)
+                } else {
+                    ForEach(careers) { career in
+                        CareerPathCard(
+                            career: career,
+                            label: "Explore",
+                            discoveryStore: discoveryStore,
+                            careerStore: careerStore
+                        )
+                    }
                 }
             }
         }
@@ -196,7 +216,7 @@ private struct CareerPathCard: View {
                         Text(career.title)
                             .font(.headline)
                         Text(career.shortDescription)
-                            .font(.subheadline)
+                            .font(.caption)
                             .foregroundStyle(Color.adaptiveTextSecondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
@@ -241,8 +261,8 @@ private struct MyCareerPathsSection: View {
     let discoveryStore: DiscoveryStore
 
     var body: some View {
-        if !careerStore.shortlistedCareers.isEmpty {
-            VStack(alignment: .leading, spacing: Spacing.medium) {
+        VStack(alignment: .leading, spacing: Spacing.medium) {
+            if !careerStore.shortlistedCareers.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("My Career Paths")
                         .font(.title2.weight(.bold))
@@ -259,7 +279,17 @@ private struct MyCareerPathsSection: View {
                         careerStore: careerStore
                     )
                 }
+                NavigationLink {
+                    CompareCareerOptionsView(discoveryStore: discoveryStore, careerStore: careerStore)
+                } label: {
+                    Label("Compare Career Options", systemImage: "arrow.left.arrow.right")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color.brandPrimary)
             }
+
+            
         }
     }
 }

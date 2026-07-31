@@ -150,7 +150,7 @@ private struct EmergingPatternCard: View {
         }
         .padding(Spacing.medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.brandTertiary.opacity(0.7))
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: Spacing.medium, style: .continuous))
     }
 }
