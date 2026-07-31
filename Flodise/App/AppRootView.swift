@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppRootView: View {
     @State private var selectedPage: AppPage = .home
+    @State private var discoveryStore = DiscoveryStore()
 
     var body: some View {
         NavigationStack {
@@ -17,7 +18,7 @@ struct AppRootView: View {
                 case .home:
                     HomeView()
                 case .discovery:
-                    DiscoveryView()
+                    DiscoveryView(store: discoveryStore)
                 }
             }
             .toolbar {
