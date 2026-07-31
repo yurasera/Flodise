@@ -59,9 +59,9 @@ enum CategoryKind {
         categoryLevel: Binding<Int>,
         categoryExp: Binding<Int>
     ) -> some View {
-        let limited = Array(tasks.prefix(2))
+        let limited = Array(tasks.prefix(3))
         if limited.isEmpty {
-            // Show two empty placeholder cards when there is no data
+            // Show three empty placeholder cards when there is no data
                 HomeCategoryCard(
                 title: "",
                 description: "",
@@ -75,6 +75,18 @@ enum CategoryKind {
                 categoryExp: categoryExp
             )
                 HomeCategoryCard(
+                title: "",
+                description: "",
+                background: headerColor,
+                foreground: backgroundColor,
+                task: nil,
+                energy: energy,
+                globalLevel: globalLevel,
+                globalExp: globalExp,
+                categoryLevel: categoryLevel,
+                categoryExp: categoryExp
+            )
+            HomeCategoryCard(
                 title: "",
                 description: "",
                 background: headerColor,

@@ -90,7 +90,7 @@ struct HomeActionBar: View {
             HomeActionButton(
                 title: "Set Priority",
                 systemImage: "flag.fill",
-                foregroundColor: Color.brandSecondary,
+                foregroundColor: .black,
                 tintColor: Color.brandPrimary
             ) {
                 priorityPresentationTrigger += 1
@@ -100,12 +100,14 @@ struct HomeActionBar: View {
             HomeActionButton(
                 title: "Start Focus",
                 systemImage: "timer",
-                foregroundColor: Color.brandPrimary
+                foregroundColor: .black,
             ) {
                 priorityPresentationTrigger += 1
                 startFocusAction()
             }
+            Spacer()
         }
+        .padding()
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
     }
 }
