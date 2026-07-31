@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DiscoveryView: View {
     let store: DiscoveryStore
+    let careerStore: CareerExplorationStore
 
     var body: some View {
         ScrollView {
@@ -28,7 +29,7 @@ struct DiscoveryView: View {
                 }
 
                 EmergingPatternCard(store: store)
-                OdysseyPlanningCTA()
+                CareerExplorationCTA(store: store, careerStore: careerStore)
             }
             .padding(.horizontal, Spacing.medium)
             .padding(.vertical, Spacing.large)
@@ -154,7 +155,10 @@ private struct EmergingPatternCard: View {
     }
 }
 
-private struct OdysseyPlanningCTA: View {
+private struct CareerExplorationCTA: View {
+    let store: DiscoveryStore
+    let careerStore: CareerExplorationStore
+
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.medium) {
             VStack(alignment: .leading, spacing: Spacing.small) {
@@ -165,11 +169,14 @@ private struct OdysseyPlanningCTA: View {
                     .foregroundStyle(Color.adaptiveTextSecondary)
             }
 
-            Button("Continue to Odyssey Planning") { }
-                .buttonStyle(.borderedProminent)
-                .tint(Color.brandPrimary)
-                .disabled(true)
-                .accessibilityHint("Odyssey Planning will be available in a future stage")
+            NavigationLink {
+                CareerExplorationView(discoveryStore: store, careerStore: careerStore)
+            } label: {
+                Text("Explore Career Paths")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(Color.brandPrimary)
         }
         .padding(.bottom, Spacing.medium)
     }

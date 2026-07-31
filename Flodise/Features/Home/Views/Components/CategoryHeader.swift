@@ -48,12 +48,6 @@ struct HomeCategoryHeader: View {
                             }
                         }
                     }
-                HStack(spacing: 8) {
-                    Label("Lv \(level)", systemImage: "sparkles")
-                    Text("EXP \(exp)/100")
-                }
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(color.opacity(0.9))
             }
             
             Spacer()
@@ -74,6 +68,13 @@ struct HomeCategoryHeader: View {
                 onReset: resetSubtitle
             )
         }
+        HStack(spacing: 8) {
+            Label("Lv \(level)", systemImage: "sparkles")
+            Spacer()
+            Text("\(exp)/100")
+        }
+        .font(.caption2.weight(.semibold))
+        .foregroundStyle(color.opacity(0.9))
     }
 
     private var hasCustomSubtitle: Bool {

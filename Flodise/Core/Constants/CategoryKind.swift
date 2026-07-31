@@ -74,30 +74,6 @@ enum CategoryKind {
                 categoryLevel: categoryLevel,
                 categoryExp: categoryExp
             )
-                HomeCategoryCard(
-                title: "",
-                description: "",
-                background: headerColor,
-                foreground: backgroundColor,
-                task: nil,
-                energy: energy,
-                globalLevel: globalLevel,
-                globalExp: globalExp,
-                categoryLevel: categoryLevel,
-                categoryExp: categoryExp
-            )
-            HomeCategoryCard(
-                title: "",
-                description: "",
-                background: headerColor,
-                foreground: backgroundColor,
-                task: nil,
-                energy: energy,
-                globalLevel: globalLevel,
-                globalExp: globalExp,
-                categoryLevel: categoryLevel,
-                categoryExp: categoryExp
-            )
         } else {
             ForEach(limited) { task in
                     HomeCategoryCard(
