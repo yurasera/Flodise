@@ -16,7 +16,7 @@ struct HomeView: View {
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
 
     @State private var viewModel: HomeViewModel
-    @State private var homeMenuDestination: HomeMenuDestination?
+    @State private var navigationPath: [HomeMenuDestination] = []
 
     // Initialize ViewModel with modelContext
     init(modelContext: ModelContext) {
@@ -30,7 +30,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             VStack(spacing: 0) {
                 if let focusTask = viewModel.focusTask(from: tasks) {
                     FocusView(task: focusTask, stopFocus: stopFocus)
@@ -58,37 +58,37 @@ struct HomeView: View {
                 }
             }
             .ignoresSafeArea()
-        }
-        .navigationDestination(item: $homeMenuDestination) { destination in
-            switch destination {
-            case .odyssey:
-                StopPathView()
-            case .discovery:
-                DiscoveryView()
+            .navigationDestination(for: HomeMenuDestination.self) { destination in
+                switch destination {
+                case .odyssey:
+                    StopPathView()
+                case .discovery:
+                    DiscoveryView()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Menu {
+                        Button {
+                            navigationPath.append(.odyssey)
+                        } label: {
+                            Label("Odyssey", systemImage: "triangle.fill")
+                        }
+
+                        Button {
+                            navigationPath.append(.discovery)
+                        } label: {
+                            Label("Discovery", systemImage: "sparkles")
+                        }
+                    } label: {
+                        Label("Navigate", systemImage: "square.grid.2x2")
+                    }
+                }
             }
         }
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
             NavigationStack {
                 PriorityView(tasks: tasks)
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .bottomBar) {
-                Menu {
-                    Button {
-                        homeMenuDestination = .odyssey
-                    } label: {
-                        Label("Odyssey", systemImage: "triangle.fill")
-                    }
-
-                    Button {
-                        homeMenuDestination = .discovery
-                    } label: {
-                        Label("Discovery", systemImage: "sparkles")
-                    }
-                } label: {
-                    Label("Navigate", systemImage: "square.grid.2x2")
-                }
             }
         }
         .onAppear {
@@ -102,11 +102,9 @@ struct HomeView: View {
     }
 }
 
-private enum HomeMenuDestination: Hashable, Identifiable {
+private enum HomeMenuDestination: Hashable {
     case odyssey
     case discovery
-
-    var id: Self { self }
 }
 
 #Preview {
