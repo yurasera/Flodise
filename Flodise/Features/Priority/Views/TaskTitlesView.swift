@@ -43,6 +43,18 @@ struct TaskTitlesView: View {
                                 HStack {
                                     Text("\(task.title) (\(titleUsageCount(for: task.title)))")
                                         .foregroundStyle(.primary)
+
+                                    if selectedSegment == .selected,
+                                       let title = persistedTitles.first(where: { $0.title == task.title }) {
+                                        ForEach(selectedIkigaiTypes(for: title)) { type in
+                                            Image(systemName: type.icon)
+                                                .font(.system(size: 11, weight: .semibold))
+                                                .symbolRenderingMode(.hierarchical)
+                                                .foregroundStyle(.secondary)
+                                                .accessibilityLabel(type.title)
+                                        }
+                                    }
+
                                     Spacer()
                                     Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
                                         .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
@@ -122,6 +134,12 @@ struct TaskTitlesView: View {
 
     private func isSelectedTitle(_ title: String) -> Bool {
         persistedTitles.first(where: { $0.title == title })?.isSelected == true
+    }
+
+    private func selectedIkigaiTypes(for title: TaskTitle) -> [IkigaiType] {
+        IkigaiType.allCases.filter { type in
+            title.ikigaiSelections.contains { $0.type == type }
+        }
     }
 
     private func toggleIkigaiExpansion(for title: String) {
