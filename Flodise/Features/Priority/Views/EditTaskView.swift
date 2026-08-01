@@ -119,47 +119,31 @@ struct EditTaskView: View {
                             subtitle: "Membutuhkan pengetahuan atau keterampilan baru.",
                             isOn: $needToLearn
                         )
+                        Divider()
                         estimatorToggle(
                             title: "Belum Tahu Cara?",
                             subtitle: "Belum mengetahui langkah untuk menyelesaikannya.",
                             isOn: $dontKnowHow
                         )
+                        Divider()
                         estimatorToggle(
                             title: "Perlu Banyak Berpikir?",
                             subtitle: "Memerlukan analisis atau pengambilan keputusan.",
                             isOn: $needThinking
                         )
+                        Divider()
                         estimatorToggle(
                             title: "Perlu Banyak Langkah?",
                             subtitle: "Terdiri dari beberapa langkah atau subtask.",
                             isOn: $manySteps
                         )
+                        Divider()
                         estimatorToggle(
                             title: "Butuh Fokus Penuh?",
                             subtitle: "Sulit dikerjakan sambil terdistraksi.",
                             isOn: $needFullFocus
                         )
 
-                        Divider()
-
-                        HStack(spacing: 4) {
-                            Text("Size: \(estimatorSize)")
-
-                            Button {
-                                showInfo = true
-                            } label: {
-                                Image(systemName: "questionmark.circle")
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .alert("Task Size", isPresented: $showInfo) {
-                            Button("OK", role: .cancel) { }
-                        } message: {
-                            Text("""
-                            Total Skor: \(estimatorScore)/5
-                            Effort: \(estimatorEffort)
-                            """)
-                        }
                     }
                     .padding(.vertical, 4)
                 }
@@ -170,6 +154,24 @@ struct EditTaskView: View {
                 } label: {
                     Text("Move to Planned")
                         .frame(maxWidth: .infinity, alignment: .center)
+                    HStack(spacing: 4) {
+                        Text("Size: \(estimatorSize)")
+
+                        Button {
+                            showInfo = true
+                        } label: {
+                            Image(systemName: "questionmark.circle")
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .alert("Task Size", isPresented: $showInfo) {
+                        Button("OK", role: .cancel) { }
+                    } message: {
+                        Text("""
+                        Total Skor: \(estimatorScore)/5
+                        Effort: \(estimatorEffort)
+                        """)
+                    }
                 }
             }else if task.status == .backlog {
                 Button {
@@ -289,7 +291,6 @@ private extension EditTaskView {
             Text(subtitle)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .padding(.leading, 8)
         }
     }
 
