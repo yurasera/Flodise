@@ -8,12 +8,67 @@ import SwiftUI
 struct TaskTitlesView: View {
     let tasks: [Task]
 
+    private enum TitleSegment: String, CaseIterable, Identifiable {
+        case all = "All Titles"
+        case selected = "Selected"
+
+        var id: Self { self }
+    }
+
+    @State private var selectedSegment: TitleSegment = .all
+    @State private var selectedTaskIDs: Set<ObjectIdentifier> = []
+
     var body: some View {
-        List(tasks) { task in
-            Text(task.title)
+        VStack(spacing: 0) {
+            Picker("Titles", selection: $selectedSegment) {
+                ForEach(TitleSegment.allCases) { segment in
+                    Text(segment.rawValue).tag(segment)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding()
+
+            List(displayedTasks) { task in
+                Button {
+                    toggleSelection(for: task)
+                } label: {
+                    HStack {
+                        Text(task.title)
+                            .foregroundStyle(.primary)
+
+                        Spacer()
+
+                        Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
         }
         .navigationTitle("Task Titles")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var displayedTasks: [Task] {
+        switch selectedSegment {
+        case .all:
+            return tasks
+        case .selected:
+            return tasks.filter { selectedTaskIDs.contains(ObjectIdentifier($0)) }
+        }
+    }
+
+    private func isSelected(_ task: Task) -> Bool {
+        selectedTaskIDs.contains(ObjectIdentifier(task))
+    }
+
+    private func toggleSelection(for task: Task) {
+        let taskID = ObjectIdentifier(task)
+        if selectedTaskIDs.contains(taskID) {
+            selectedTaskIDs.remove(taskID)
+        } else {
+            selectedTaskIDs.insert(taskID)
+        }
     }
 }
 
