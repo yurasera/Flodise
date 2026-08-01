@@ -12,6 +12,16 @@ struct PriorityFilterSection: View {
     @Binding var selectedCategory: CategoryFilter
     @Binding var selectedProgress: ProgressFilter
 
+    private func taskCount(for category: CategoryFilter) -> Int {
+        PriorityTaskFilter(
+            tasks: tasks,
+            selectedCategory: category,
+            selectedProgress: selectedProgress
+        )
+        .filteredTasks
+        .count
+    }
+
     private func taskCount(for progress: ProgressFilter) -> Int {
         PriorityTaskFilter(
             tasks: tasks,
@@ -55,7 +65,8 @@ struct PriorityFilterSection: View {
 
                     Picker("Category", selection: $selectedCategory) {
                         ForEach(CategoryFilter.allCases) { category in
-                            Text(category.rawValue == "Hobbies" ? "Creative" : category.rawValue).tag(category)
+                            Text("\(category.rawValue == "Alternative" ? "Alter" : category.rawValue ) (\(taskCount(for: category)))")
+                                .tag(category)
                         }
                     }
                     .pickerStyle(.segmented)
