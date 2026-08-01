@@ -31,6 +31,7 @@ struct PriorityView: View {
     var body: some View {
         List {
             PriorityFilterSection(
+                tasks: tasks,
                 selectedCategory: $selectedCategory,
                 selectedProgress: $selectedProgress
             )

@@ -8,8 +8,19 @@
 import SwiftUI
 
 struct PriorityFilterSection: View {
+    let tasks: [Task]
     @Binding var selectedCategory: CategoryFilter
     @Binding var selectedProgress: ProgressFilter
+
+    private func taskCount(for progress: ProgressFilter) -> Int {
+        PriorityTaskFilter(
+            tasks: tasks,
+            selectedCategory: selectedCategory,
+            selectedProgress: progress
+        )
+        .filteredTasks
+        .count
+    }
     
     var body: some View {
         Section {
@@ -25,12 +36,12 @@ struct PriorityFilterSection: View {
                                 Button {
                                     selectedProgress = progress
                                 } label: {
-                                    Label(progress.rawValue, systemImage: selectedProgress == progress ? "checkmark" : "")
+                                    Label("\(progress.rawValue) (\(taskCount(for: progress)))", systemImage: selectedProgress == progress ? "checkmark" : "")
                                 }
                             }
                         } label: {
                             HStack(spacing: 6) {
-                                Text(selectedProgress.rawValue)
+                                Text("\(selectedProgress.rawValue) (\(taskCount(for: selectedProgress)))")
                                 Image(systemName: "chevron.down")
                                     .font(.caption2)
                             }
