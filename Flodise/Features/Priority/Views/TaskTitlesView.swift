@@ -50,11 +50,22 @@ struct TaskTitlesView: View {
     }
 
     private var displayedTasks: [Task] {
+        let filteredTasks: [Task]
+
         switch selectedSegment {
         case .all:
-            return tasks
+            filteredTasks = tasks
         case .selected:
-            return tasks.filter { selectedTaskIDs.contains(ObjectIdentifier($0)) }
+            filteredTasks = tasks.filter { selectedTaskIDs.contains(ObjectIdentifier($0)) }
+        }
+
+        var uniqueTasksByTitle: [String: Task] = [:]
+        for task in filteredTasks {
+            uniqueTasksByTitle[task.title] = task
+        }
+
+        return uniqueTasksByTitle.values.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
         }
     }
 
