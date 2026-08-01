@@ -88,6 +88,12 @@ struct PriorityView: View {
                         Label("Copy", systemImage: "doc.on.doc")
                     }
                     .disabled(taskFilter.filteredTasks.isEmpty)
+
+                    NavigationLink {
+                        TaskTitlesView(tasks: tasks)
+                    } label: {
+                        Label("All Task Titles", systemImage: "list.bullet")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
