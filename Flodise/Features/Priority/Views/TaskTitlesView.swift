@@ -4,10 +4,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @MainActor
 struct TaskTitlesView: View {
-    @AppStorage("priority.selectedTaskTitles") private var selectedTitleData = "[]"
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: [SortDescriptor(\TaskTitle.title)])
+    private var persistedTitles: [TaskTitle]
 
     let tasks: [Task]
 
@@ -57,7 +60,7 @@ struct TaskTitlesView: View {
         case .all:
             filteredTasks = tasks
         case .selected:
-            filteredTasks = tasks.filter { selectedTitles.contains($0.title) }
+            filteredTasks = tasks.filter { isSelectedTitle($0.title) }
         }
 
         var uniqueTasksByTitle: [String: Task] = [:]
@@ -71,7 +74,7 @@ struct TaskTitlesView: View {
     }
 
     private func isSelected(_ task: Task) -> Bool {
-        selectedTitles.contains(task.title)
+        isSelectedTitle(task.title)
     }
 
     private func titleUsageCount(for title: String) -> Int {
@@ -79,28 +82,21 @@ struct TaskTitlesView: View {
     }
 
     private func toggleSelection(for task: Task) {
-        var titles = selectedTitles
-        if titles.contains(task.title) {
-            titles.remove(task.title)
+        if let persistedTitle = persistedTitles.first(where: { $0.title == task.title }) {
+            persistedTitle.isSelected.toggle()
         } else {
-            titles.insert(task.title)
+            modelContext.insert(TaskTitle(title: task.title, isSelected: true))
         }
-        selectedTitleData = encode(titles)
+
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("Failed to save task title selection: \(error)")
+        }
     }
 
-    private var selectedTitles: Set<String> {
-        guard let data = selectedTitleData.data(using: .utf8),
-              let titles = try? JSONDecoder().decode([String].self, from: data) else {
-            return []
-        }
-        return Set(titles)
-    }
-
-    private func encode(_ titles: Set<String>) -> String {
-        guard let data = try? JSONEncoder().encode(Array(titles).sorted()) else {
-            return "[]"
-        }
-        return String(decoding: data, as: UTF8.self)
+    private func isSelectedTitle(_ title: String) -> Bool {
+        persistedTitles.first(where: { $0.title == title })?.isSelected == true
     }
 }
 
@@ -113,4 +109,5 @@ struct TaskTitlesView: View {
             Task(title: "Build Flodise", notes: "", category: category)
         ])
     }
+    .modelContainer(for: [Category.self, Task.self, TaskIkigaiSelection.self, TaskTitle.self], inMemory: true)
 }
