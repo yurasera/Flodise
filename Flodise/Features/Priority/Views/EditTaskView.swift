@@ -154,6 +154,7 @@ struct EditTaskView: View {
                 } label: {
                     Text("Move to Planned")
                         .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 6)
                     HStack(spacing: 4) {
                         Text("Size: \(estimatorSize)")
 
@@ -173,30 +174,45 @@ struct EditTaskView: View {
                         """)
                     }
                 }
+            }else if task.status == .planned {
+                
+                    Button {
+                        updateTaskStatus(to: .backlog)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text("Move to Active")
+                            if backlogEstimatedEffortTotal > 0 {
+                                Text("Active Effort Total: \(backlogEstimatedEffortTotal)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                    .alignmentGuide(.listRowSeparatorLeading) { _ in
+                        return 0 // Memaksa garis pemisah ditarik dari titik paling kiri (0)
+                    }
+                
+                    Button {
+                        updateTaskStatus(to: .idea)
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text("Back to Idea")
+                                .foregroundStyle(.red)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    }
+                
             }else if task.status == .backlog {
                 Button {
                     updateTaskStatus(to: .planned)
                 } label: {
                     VStack(spacing: 4) {
-                        Text("Move to Planned")
+                        Text("Back to Planned")
+                            .foregroundStyle(.red)
                         if backlogEstimatedEffortTotal > 0 {
                             Text("Active Effort Total: \(backlogEstimatedEffortTotal)")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .center)
-                }
-            }else if task.status == .planned {
-                Button {
-                    updateTaskStatus(to: .backlog)
-                } label: {
-                    VStack(spacing: 4) {
-                        Text("Move to Active")
-                        if backlogEstimatedEffortTotal > 0 {
-                            Text("Active Effort Total: \(backlogEstimatedEffortTotal)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
