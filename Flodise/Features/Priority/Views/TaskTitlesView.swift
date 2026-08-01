@@ -33,7 +33,7 @@ struct TaskTitlesView: View {
                     toggleSelection(for: task)
                 } label: {
                     HStack {
-                        Text(task.title)
+                        Text("\(task.title) (\(titleUsageCount(for: task.title)))")
                             .foregroundStyle(.primary)
 
                         Spacer()
@@ -71,6 +71,10 @@ struct TaskTitlesView: View {
 
     private func isSelected(_ task: Task) -> Bool {
         selectedTaskIDs.contains(ObjectIdentifier(task))
+    }
+
+    private func titleUsageCount(for title: String) -> Int {
+        tasks.filter { $0.title == title }.count
     }
 
     private func toggleSelection(for task: Task) {
