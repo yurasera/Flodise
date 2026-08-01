@@ -5,7 +5,10 @@
 
 import SwiftUI
 
+@MainActor
 struct TaskTitlesView: View {
+    @AppStorage("priority.selectedTaskTitles") private var selectedTitleData = "[]"
+
     let tasks: [Task]
 
     private enum TitleSegment: String, CaseIterable, Identifiable {
@@ -16,8 +19,6 @@ struct TaskTitlesView: View {
     }
 
     @State private var selectedSegment: TitleSegment = .all
-    @State private var selectedTaskIDs: Set<ObjectIdentifier> = []
-
     var body: some View {
         VStack(spacing: 0) {
             Picker("Titles", selection: $selectedSegment) {
@@ -56,7 +57,7 @@ struct TaskTitlesView: View {
         case .all:
             filteredTasks = tasks
         case .selected:
-            filteredTasks = tasks.filter { selectedTaskIDs.contains(ObjectIdentifier($0)) }
+            filteredTasks = tasks.filter { selectedTitles.contains($0.title) }
         }
 
         var uniqueTasksByTitle: [String: Task] = [:]
@@ -70,7 +71,7 @@ struct TaskTitlesView: View {
     }
 
     private func isSelected(_ task: Task) -> Bool {
-        selectedTaskIDs.contains(ObjectIdentifier(task))
+        selectedTitles.contains(task.title)
     }
 
     private func titleUsageCount(for title: String) -> Int {
@@ -78,12 +79,28 @@ struct TaskTitlesView: View {
     }
 
     private func toggleSelection(for task: Task) {
-        let taskID = ObjectIdentifier(task)
-        if selectedTaskIDs.contains(taskID) {
-            selectedTaskIDs.remove(taskID)
+        var titles = selectedTitles
+        if titles.contains(task.title) {
+            titles.remove(task.title)
         } else {
-            selectedTaskIDs.insert(taskID)
+            titles.insert(task.title)
         }
+        selectedTitleData = encode(titles)
+    }
+
+    private var selectedTitles: Set<String> {
+        guard let data = selectedTitleData.data(using: .utf8),
+              let titles = try? JSONDecoder().decode([String].self, from: data) else {
+            return []
+        }
+        return Set(titles)
+    }
+
+    private func encode(_ titles: Set<String>) -> String {
+        guard let data = try? JSONEncoder().encode(Array(titles).sorted()) else {
+            return "[]"
+        }
+        return String(decoding: data, as: UTF8.self)
     }
 }
 
