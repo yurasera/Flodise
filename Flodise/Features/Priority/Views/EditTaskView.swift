@@ -83,7 +83,7 @@ struct EditTaskView: View {
                     }
                 }
             }
-            if task.status != .idea && task.status != .planned {
+            if task.status == .archive{
                 Section("Why are you doing this task?") {
                     VStack(alignment: .leading, spacing: 16) {
                         
