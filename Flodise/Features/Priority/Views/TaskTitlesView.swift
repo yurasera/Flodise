@@ -22,6 +22,7 @@ struct TaskTitlesView: View {
     }
 
     @State private var selectedSegment: TitleSegment = .all
+    @State private var expandedIkigaiTitles: Set<String> = []
     var body: some View {
         VStack(spacing: 0) {
             Picker("Titles", selection: $selectedSegment) {
@@ -35,21 +36,36 @@ struct TaskTitlesView: View {
             List {
                 ForEach(displayedTasks) { task in
                     VStack(alignment: .leading, spacing: 12) {
-                        Button {
-                    toggleSelection(for: task)
-                } label: {
-                    HStack {
-                        Text("\(task.title) (\(titleUsageCount(for: task.title)))")
-                            .foregroundStyle(.primary)
+                        HStack {
+                            Button {
+                                toggleSelection(for: task)
+                            } label: {
+                                HStack {
+                                    Text("\(task.title) (\(titleUsageCount(for: task.title)))")
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                    Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
+                                }
+                            }
+                            .buttonStyle(.plain)
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
-                    }
-                }
-                .buttonStyle(.plain)
+                            if selectedSegment == .selected {
+                                Button {
+                                    toggleIkigaiExpansion(for: task.title)
+                                } label: {
+                                    Image(systemName: expandedIkigaiTitles.contains(task.title) ? "chevron.up" : "chevron.down")
+                                        .foregroundStyle(.secondary)
+                                        .frame(width: 32, height: 32)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel(expandedIkigaiTitles.contains(task.title) ? "Hide Ikigai" : "Show Ikigai")
+                            }
+                        }
                         if selectedSegment == .selected,
+                           expandedIkigaiTitles.contains(task.title),
                            let title = persistedTitles.first(where: { $0.title == task.title }) {
                             ikigaiCards(for: title)
                         }
@@ -106,6 +122,14 @@ struct TaskTitlesView: View {
 
     private func isSelectedTitle(_ title: String) -> Bool {
         persistedTitles.first(where: { $0.title == title })?.isSelected == true
+    }
+
+    private func toggleIkigaiExpansion(for title: String) {
+        if expandedIkigaiTitles.contains(title) {
+            expandedIkigaiTitles.remove(title)
+        } else {
+            expandedIkigaiTitles.insert(title)
+        }
     }
 
     @ViewBuilder
