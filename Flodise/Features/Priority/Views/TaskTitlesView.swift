@@ -32,8 +32,10 @@ struct TaskTitlesView: View {
             .pickerStyle(.segmented)
             .padding()
 
-            List(displayedTasks) { task in
-                Button {
+            List {
+                ForEach(displayedTasks) { task in
+                    VStack(alignment: .leading, spacing: 12) {
+                        Button {
                     toggleSelection(for: task)
                 } label: {
                     HStack {
@@ -47,6 +49,13 @@ struct TaskTitlesView: View {
                     }
                 }
                 .buttonStyle(.plain)
+                        if selectedSegment == .selected,
+                           let title = persistedTitles.first(where: { $0.title == task.title }) {
+                            ikigaiCards(for: title)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
             }
         }
         .navigationTitle("Task Titles")
@@ -98,6 +107,36 @@ struct TaskTitlesView: View {
     private func isSelectedTitle(_ title: String) -> Bool {
         persistedTitles.first(where: { $0.title == title })?.isSelected == true
     }
+
+    @ViewBuilder
+    private func ikigaiCards(for title: TaskTitle) -> some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            ForEach(IkigaiType.allCases) { type in
+                IkigaiCard(
+                    icon: type.icon,
+                    title: type.title,
+                    description: type.description,
+                    isSelected: title.ikigaiSelections.contains { $0.type == type }
+                ) {
+                    if let selection = title.ikigaiSelections.first(where: { $0.type == type }) {
+                        modelContext.delete(selection)
+                    } else {
+                        let selection = TaskTitleIkigaiSelection(type: type, taskTitle: title)
+                        title.ikigaiSelections.append(selection)
+                    }
+                    saveChanges()
+                }
+            }
+        }
+    }
+
+    private func saveChanges() {
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("Failed to save task title changes: \(error)")
+        }
+    }
 }
 
 #Preview {
@@ -109,5 +148,5 @@ struct TaskTitlesView: View {
             Task(title: "Build Flodise", notes: "", category: category)
         ])
     }
-    .modelContainer(for: [Category.self, Task.self, TaskIkigaiSelection.self, TaskTitle.self], inMemory: true)
+    .modelContainer(for: [Category.self, Task.self, TaskIkigaiSelection.self, TaskTitle.self, TaskTitleIkigaiSelection.self], inMemory: true)
 }

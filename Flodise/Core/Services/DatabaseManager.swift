@@ -18,7 +18,8 @@ enum DatabaseManager {
                 for: Category.self,
                 Task.self,
                 TaskIkigaiSelection.self,
-                TaskTitle.self
+                TaskTitle.self,
+                TaskTitleIkigaiSelection.self
             )
             try seedDataIfNeeded(in: ModelContext(container))
             return container
