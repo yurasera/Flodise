@@ -8,6 +8,7 @@ import SwiftData
 
 @MainActor
 struct PriorityView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query(sort: [SortDescriptor(\TaskTitle.title)])
     private var persistedTitles: [TaskTitle]
@@ -68,6 +69,11 @@ struct PriorityView: View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+            }
         }
     }
 
