@@ -45,19 +45,21 @@ struct TaskTitlesView: View {
                                         Text(task.title)
                                             .foregroundStyle(.primary)
 
-                                        Text(titleMetadata(for: task))
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-
-                                    if selectedSegment == .selected,
-                                       let title = persistedTitles.first(where: { $0.title == task.title }) {
-                                        ForEach(selectedIkigaiTypes(for: title)) { type in
-                                            Image(systemName: type.icon)
-                                                .font(.system(size: 11, weight: .semibold))
-                                                .symbolRenderingMode(.hierarchical)
+                                        HStack(spacing: 6) {
+                                            Text(titleMetadata(for: task))
+                                                .font(.caption)
                                                 .foregroundStyle(.secondary)
-                                                .accessibilityLabel(type.title)
+
+                                            if selectedSegment == .selected,
+                                               let title = persistedTitles.first(where: { $0.title == task.title }) {
+                                                ForEach(selectedIkigaiTypes(for: title)) { type in
+                                                    Image(systemName: type.icon)
+                                                        .font(.system(size: 11, weight: .semibold))
+                                                        .symbolRenderingMode(.hierarchical)
+                                                        .foregroundStyle(.secondary)
+                                                        .accessibilityLabel(type.title)
+                                                }
+                                            }
                                         }
                                     }
 
