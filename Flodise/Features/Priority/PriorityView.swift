@@ -1,5 +1,5 @@
 //
-//  TaskTitlesView.swift
+//  PriorityView.swift
 //  Flodise
 //
 
@@ -7,7 +7,7 @@ import SwiftUI
 import SwiftData
 
 @MainActor
-struct TaskTitlesView: View {
+struct PriorityView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: [SortDescriptor(\TaskTitle.title)])
     private var persistedTitles: [TaskTitle]
@@ -60,7 +60,7 @@ struct TaskTitlesView: View {
                 }
             }
         }
-        .navigationTitle("Task Titles")
+        .navigationTitle("Priority")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(item: $presentedTitle) { title in
             NavigationStack {
@@ -392,7 +392,7 @@ struct TaskTitlesView: View {
     let category = Category(name: "Current", color: "blue")
 
     NavigationStack {
-        TaskTitlesView(tasks: [
+        PriorityView(tasks: [
             Task(title: "Learn SwiftData", notes: "", category: category),
             Task(title: "Build Flodise", notes: "", category: category)
         ])

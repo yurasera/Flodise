@@ -50,7 +50,7 @@ struct StatusActionBar: View {
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
         .sheet(isPresented: $isPresentingTaskTitles) {
             NavigationStack {
-                TaskTitlesView(tasks: tasks)
+                PriorityView(tasks: tasks)
             }
         }
     }

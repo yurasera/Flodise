@@ -90,7 +90,7 @@ struct WorkflowView: View {
                     .disabled(taskFilter.filteredTasks.isEmpty)
 
                     NavigationLink {
-                        TaskTitlesView(tasks: tasks)
+                        PriorityView(tasks: tasks)
                     } label: {
                         Label("All Task Titles", systemImage: "list.bullet")
                     }
