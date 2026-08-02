@@ -11,6 +11,8 @@ struct FocusTimerSection: View {
     let viewModel: FocusViewModel
     let isWorkMode: Bool
     let onTimerStarted: (EventLogType) -> Void
+    let backgroundColor: Color
+    let foregroundColor: Color
     
     var body: some View {
         VStack(spacing: 16) {
@@ -28,6 +30,8 @@ struct FocusTimerSection: View {
                 .font(.headline)
                 .padding(.horizontal, 24)
                 .padding(.vertical, 12)
+                .background(backgroundColor)
+                .foregroundColor(foregroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 24))
                 .glassEffect()
             } else {
@@ -40,7 +44,9 @@ struct FocusTimerSection: View {
                             pomodoroManager: pomodoroManager,
                             viewModel: viewModel,
                             eventType: .workSessionStarted,
-                            onTimerStarted: onTimerStarted
+                            onTimerStarted: onTimerStarted,
+                            backgroundColor: backgroundColor,
+                            foregroundColor: foregroundColor
                         )
                     } else {
                         FocusTimerButton(
@@ -50,7 +56,9 @@ struct FocusTimerSection: View {
                             pomodoroManager: pomodoroManager,
                             viewModel: viewModel,
                             eventType: .breakSessionStarted,
-                            onTimerStarted: onTimerStarted
+                            onTimerStarted: onTimerStarted,
+                            backgroundColor: backgroundColor,
+                            foregroundColor: foregroundColor
                         )
 
                         FocusTimerButton(
@@ -60,7 +68,9 @@ struct FocusTimerSection: View {
                             pomodoroManager: pomodoroManager,
                             viewModel: viewModel,
                             eventType: .breakSessionStarted,
-                            onTimerStarted: onTimerStarted
+                            onTimerStarted: onTimerStarted,
+                            backgroundColor: backgroundColor,
+                            foregroundColor: foregroundColor
                         )
                     }
                 }

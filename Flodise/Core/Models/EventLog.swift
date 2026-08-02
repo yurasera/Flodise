@@ -12,6 +12,7 @@ enum EventLogType: String {
     case breakModeSelected
     case workSessionStarted
     case breakSessionStarted
+    case focusSessionEnded
 }
 
 @Model

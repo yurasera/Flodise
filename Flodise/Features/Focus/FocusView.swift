@@ -42,13 +42,15 @@ struct FocusView: View {
                 pomodoroManager: pomodoroManager,
                 viewModel: viewModel,
                 isWorkMode: isWorkMode,
-                onTimerStarted: recordEvent
+                onTimerStarted: recordEvent,
+                backgroundColor: viewModel.backgroundColor(for: task.category?.name),
+                foregroundColor: viewModel.textColor(for: task.category?.name)
             )
             .padding(.top, 24)
 
             Button {
                 isWorkMode.toggle()
-                recordEvent(isWorkMode ? .workModeSelected : .breakModeSelected)
+                recordEvent(isWorkMode ? .breakModeSelected : .workModeSelected)
             } label: {
                 Label(isWorkMode ? "Work" : "Break", systemImage: "arrow.triangle.2.circlepath")
                     .font(.headline)
@@ -56,6 +58,8 @@ struct FocusView: View {
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
+            .background(viewModel.backgroundColor(for: task.category?.name))
+            .foregroundStyle(viewModel.textColor(for: task.category?.name))
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .glassEffect()
             .padding(.top, 16)
@@ -65,7 +69,14 @@ struct FocusView: View {
 
             Spacer()
 
-            FocusActionButton(action: stopFocus)
+            FocusActionButton(
+                action: {
+                    recordEvent(.focusSessionEnded)
+                    stopFocus()
+                },
+                backgroundColor: viewModel.backgroundColor(for: task.category?.name),
+                foregroundColor: viewModel.textColor(for: task.category?.name)
+            )
                 .padding(.bottom, 48)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -128,6 +139,8 @@ private struct FocusEventLogSection: View {
         switch EventLogType(rawValue: eventLog.eventType) {
         case .focusSessionStarted:
             return "Focus session started"
+        case .focusSessionEnded:
+            return "Focus session ended"
         case .workModeSelected:
             return "Switched to Work"
         case .breakModeSelected:

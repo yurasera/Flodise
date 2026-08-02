@@ -13,6 +13,8 @@ struct FocusTimerButton: View {
     let viewModel: FocusViewModel
     let eventType: EventLogType
     let onTimerStarted: (EventLogType) -> Void
+    let backgroundColor: Color
+    let foregroundColor: Color
     
     var body: some View {
         Button(label) {
@@ -25,7 +27,8 @@ struct FocusTimerButton: View {
         .font(.caption)
         .padding(.horizontal, 24)
         .padding(.vertical, 12)
+        .background(backgroundColor)
+        .foregroundColor(foregroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .glassEffect()
     }
 }
