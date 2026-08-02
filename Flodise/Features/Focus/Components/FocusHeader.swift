@@ -12,12 +12,7 @@ struct FocusHeader: View {
     var body: some View {
         HStack(spacing: 8) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Focus")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .textCase(.uppercase)
-                    .foregroundStyle(.secondary)
-                Text(categoryName ?? "Uncategorized")
+                Text((categoryName ?? "Uncategorized") + " Path")
                     .font(.caption)
                     .fontWeight(.semibold)
                     .textCase(.uppercase)

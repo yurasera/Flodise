@@ -20,6 +20,7 @@ struct FocusView: View {
     @State private var viewModel = FocusViewModel()
     @State private var hasLoggedFocusSessionStart = false
     @State private var isWorkMode = true
+    @State private var isShowingEventLog = false
 
     private let focusTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -48,20 +49,36 @@ struct FocusView: View {
             )
             .padding(.top, 24)
 
-            Button {
-                isWorkMode.toggle()
-                recordEvent(isWorkMode ? .breakModeSelected : .workModeSelected)
-            } label: {
-                Label(isWorkMode ? "Work" : "Break", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
+            HStack(spacing: 12) {
+                Button {
+                    isShowingEventLog = true
+                } label: {
+                    Image(systemName: "list.bullet.rectangle")
+                        .font(.headline)
+                        .frame(width: 48)
+                }
+                .padding(.vertical, 12)
+                .background(viewModel.backgroundColor(for: task.category?.name))
+                .foregroundStyle(viewModel.textColor(for: task.category?.name))
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .glassEffect()
+                .accessibilityLabel("Show event log")
+
+                Button {
+                    isWorkMode.toggle()
+                    recordEvent(isWorkMode ? .workModeSelected : .breakModeSelected)
+                } label: {
+                    Label(isWorkMode ? "Work" : "Break", systemImage: "arrow.triangle.2.circlepath")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(viewModel.backgroundColor(for: task.category?.name))
+                .foregroundStyle(viewModel.textColor(for: task.category?.name))
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .glassEffect()
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
-            .background(viewModel.backgroundColor(for: task.category?.name))
-            .foregroundStyle(viewModel.textColor(for: task.category?.name))
-            .clipShape(RoundedRectangle(cornerRadius: 24))
-            .glassEffect()
             .padding(.top, 16)
 
             FocusEventLogSection(eventLogs: taskEventLogs)
@@ -91,6 +108,9 @@ struct FocusView: View {
         .onReceive(focusTimer) { date in
             viewModel.now = date
         }
+        .sheet(isPresented: $isShowingEventLog) {
+            FocusEventLogSheet(eventLogs: taskEventLogs)
+        }
     }
 
     private func recordEvent(_ eventType: EventLogType) {
@@ -110,6 +130,12 @@ struct FocusView: View {
 
 private struct FocusEventLogSection: View {
     let eventLogs: [EventLog]
+    var maximumEvents: Int? = 5
+
+    private var displayedEventLogs: [EventLog] {
+        guard let maximumEvents else { return eventLogs }
+        return Array(eventLogs.prefix(maximumEvents))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -120,7 +146,7 @@ private struct FocusEventLogSection: View {
                 Text("No events recorded yet")
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(eventLogs.prefix(5)) { eventLog in
+                ForEach(displayedEventLogs) { eventLog in
                     HStack {
                         Text(eventLabel(for: eventLog))
                         Spacer()
@@ -151,6 +177,29 @@ private struct FocusEventLogSection: View {
             return "Break timer started"
         case nil:
             return eventLog.eventType
+        }
+    }
+}
+
+private struct FocusEventLogSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let eventLogs: [EventLog]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                FocusEventLogSection(eventLogs: eventLogs, maximumEvents: nil)
+                    .padding()
+            }
+            .navigationTitle("Event Log")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
         }
     }
 }
