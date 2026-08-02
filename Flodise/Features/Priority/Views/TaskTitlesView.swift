@@ -41,8 +41,14 @@ struct TaskTitlesView: View {
                                 toggleSelection(for: task)
                             } label: {
                                 HStack {
-                                    Text("\(task.title) (\(titleUsageCount(for: task.title)))")
-                                        .foregroundStyle(.primary)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(task.title)
+                                            .foregroundStyle(.primary)
+
+                                        Text(titleMetadata(for: task))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
 
                                     if selectedSegment == .selected,
                                        let title = persistedTitles.first(where: { $0.title == task.title }) {
@@ -126,6 +132,18 @@ struct TaskTitlesView: View {
 
     private func titleUsageCount(for title: String) -> Int {
         tasks.filter { $0.title == title }.count
+    }
+
+    private func titleMetadata(for task: Task) -> String {
+        let usageCount = titleUsageCount(for: task.title)
+
+        guard selectedSegment == .selected,
+              let title = persistedTitles.first(where: { $0.title == task.title }),
+              let assessment = title.priorityAssessment else {
+            return "Used by \(usageCount) task\(usageCount == 1 ? "" : "s")"
+        }
+
+        return "Used by \(usageCount) task\(usageCount == 1 ? "" : "s") · Score: \(assessment.priorityScore)"
     }
 
     private func toggleSelection(for task: Task) {
