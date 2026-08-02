@@ -6,14 +6,20 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct WorkflowFilterSection: View {
     let tasks: [Task]
     @Binding var selectedCategory: CategoryFilter
     @Binding var selectedProgress: ProgressFilter
+    @Query(sort: \TaskTitle.title) private var taskTitles: [TaskTitle]
     @State private var usesSegmentedProgressPicker = false
 
     private let visibleProgressFilters: [ProgressFilter] = [.idea, .planned, .active]
+
+    private var selectedTaskTitles: [TaskTitle] {
+        taskTitles.filter(\.isSelected)
+    }
 
     private func taskCount(for category: CategoryFilter) -> Int {
         WorkflowTaskFilter(
@@ -99,6 +105,22 @@ struct WorkflowFilterSection: View {
                         }
                     }
                     .pickerStyle(.segmented)
+
+                    if !selectedTaskTitles.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(selectedTaskTitles) { taskTitle in
+                                    Label(taskTitle.title, systemImage: "checkmark.circle.fill")
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(Color.brandPrimary)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 6)
+                                        .background(Color.brandPrimary.opacity(0.12), in: Capsule())
+                                }
+                            }
+                        }
+                        .accessibilityLabel("Selected task titles")
+                    }
                 }
             }
             .padding(.vertical, 8)
