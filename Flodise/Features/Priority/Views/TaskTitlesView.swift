@@ -228,28 +228,48 @@ struct TaskTitlesView: View {
                 Text("Important")
                     .font(.subheadline.weight(.semibold))
 
-                Toggle(
-                    "Apakah tugas ini membantu saya mencapai tujuan?",
-                    isOn: booleanBinding(for: assessment, keyPath: \.importantGoalContribution)
-                )
-                Toggle(
-                    "Jika saya tidak mengerjakan tugas ini, apakah tujuan saya akan tertunda atau lebih sulit tercapai?",
-                    isOn: booleanBinding(for: assessment, keyPath: \.importantBlocksGoal)
-                )
+                priorityQuestionGrid {
+                    priorityQuestionCard(
+                        icon: "target",
+                        title: "Goal",
+                        description: "Apakah tugas ini membantu saya mencapai tujuan?",
+                        isSelected: assessment.importantGoalContribution
+                    ) {
+                        assessment.importantGoalContribution.toggle()
+                    }
+                    priorityQuestionCard(
+                        icon: "arrow.triangle.branch",
+                        title: "Blocker",
+                        description: "Jika tidak dikerjakan, apakah tujuan akan tertunda atau lebih sulit tercapai?",
+                        isSelected: assessment.importantBlocksGoal
+                    ) {
+                        assessment.importantBlocksGoal.toggle()
+                    }
+                }
             }
 
             VStack(alignment: .leading, spacing: 8) {
                 Text("Urgent")
                     .font(.subheadline.weight(.semibold))
 
-                Toggle(
-                    "Apakah tugas ini harus segera dikerjakan?",
-                    isOn: booleanBinding(for: assessment, keyPath: \.urgentImmediate)
-                )
-                Toggle(
-                    "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam waktu dekat?",
-                    isOn: booleanBinding(for: assessment, keyPath: \.urgentHasConsequence)
-                )
+                priorityQuestionGrid {
+                    priorityQuestionCard(
+                        icon: "clock.fill",
+                        title: "Immediate",
+                        description: "Apakah tugas ini harus segera dikerjakan?",
+                        isSelected: assessment.urgentImmediate
+                    ) {
+                        assessment.urgentImmediate.toggle()
+                    }
+                    priorityQuestionCard(
+                        icon: "exclamationmark.triangle.fill",
+                        title: "Consequence",
+                        description: "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam waktu dekat?",
+                        isSelected: assessment.urgentHasConsequence
+                    ) {
+                        assessment.urgentHasConsequence.toggle()
+                    }
+                }
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -268,17 +288,29 @@ struct TaskTitlesView: View {
         }
     }
 
-    private func booleanBinding(
-        for assessment: TaskTitlePriorityAssessment,
-        keyPath: ReferenceWritableKeyPath<TaskTitlePriorityAssessment, Bool>
-    ) -> Binding<Bool> {
-        Binding(
-            get: { assessment[keyPath: keyPath] },
-            set: { newValue in
-                assessment[keyPath: keyPath] = newValue
-                saveChanges()
-            }
-        )
+    @ViewBuilder
+    private func priorityQuestionGrid<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            content()
+        }
+    }
+
+    private func priorityQuestionCard(
+        icon: String,
+        title: String,
+        description: String,
+        isSelected: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        IkigaiCard(
+            icon: icon,
+            title: title,
+            description: description,
+            isSelected: isSelected
+        ) {
+            action()
+            saveChanges()
+        }
     }
 
     private func saveChanges() {
