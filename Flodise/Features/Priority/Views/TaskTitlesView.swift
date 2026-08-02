@@ -326,7 +326,7 @@ struct TaskTitlesView: View {
 
     @ViewBuilder
     private func priorityQuestionGrid<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        LazyVStack(alignment: .leading, spacing: 12) {
             content()
         }
     }
