@@ -34,78 +34,99 @@ struct TaskTitlesView: View {
             .padding()
 
             List {
-                ForEach(displayedTasks) { task in
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack {
-                            Button {
-                                toggleSelection(for: task)
-                            } label: {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(task.title)
-                                            .foregroundStyle(.primary)
-
-                                        HStack(spacing: 6) {
-                                            Text(titleMetadata(for: task))
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-
-                                            if selectedSegment == .selected,
-                                               let title = persistedTitles.first(where: { $0.title == task.title }) {
-                                                ForEach(selectedIkigaiTypes(for: title)) { type in
-                                                    Image(systemName: type.icon)
-                                                        .font(.system(size: 11, weight: .semibold))
-                                                        .symbolRenderingMode(.hierarchical)
-                                                        .foregroundStyle(.secondary)
-                                                        .accessibilityLabel(type.title)
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Spacer()
-                                    Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
-                                        .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
+                switch selectedSegment {
+                case .all:
+                    ForEach(displayedTasks) { task in
+                        taskTitleRow(for: task)
+                    }
+                case .selected:
+                    ForEach(EisenhowerQuadrant.allCases) { quadrant in
+                        if !selectedTasks(in: quadrant).isEmpty {
+                            Section(quadrant.label) {
+                                ForEach(selectedTasks(in: quadrant)) { task in
+                                    taskTitleRow(for: task)
                                 }
-                            }
-                            .buttonStyle(.plain)
-
-                            Spacer()
-
-                            if selectedSegment == .selected {
-                                Button {
-                                    toggleTitleDetails(for: task.title)
-                                } label: {
-                                    Image(systemName: expandedTitleDetails.contains(task.title) ? "chevron.up" : "chevron.down")
-                                        .foregroundStyle(.secondary)
-                                        .frame(width: 32, height: 32)
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel(expandedTitleDetails.contains(task.title) ? "Hide title details" : "Show title details")
-                            }
-                        }
-                        if selectedSegment == .selected,
-                           expandedTitleDetails.contains(task.title),
-                           let title = persistedTitles.first(where: { $0.title == task.title }) {
-                            ikigaiCards(for: title)
-
-                            if let assessment = title.priorityAssessment {
-                                priorityQuestions(for: assessment)
-                            } else {
-                                Button("Start Priority Assessment") {
-                                    ensurePriorityAssessment(for: title)
-                                    saveChanges()
-                                }
-                                .buttonStyle(.borderedProminent)
                             }
                         }
                     }
-                    .padding(.vertical, 4)
+
+                    if !selectedTasksWithoutAssessment.isEmpty {
+                        Section("Not Assessed") {
+                            ForEach(selectedTasksWithoutAssessment) { task in
+                                taskTitleRow(for: task)
+                            }
+                        }
+                    }
                 }
             }
         }
         .navigationTitle("Task Titles")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private func taskTitleRow(for task: Task) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Button {
+                    toggleSelection(for: task)
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(task.title)
+                                .foregroundStyle(.primary)
+                            HStack(spacing: 6) {
+                                Text(titleMetadata(for: task))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                if selectedSegment == .selected,
+                                   let title = persistedTitles.first(where: { $0.title == task.title }) {
+                                    ForEach(selectedIkigaiTypes(for: title)) { type in
+                                        Image(systemName: type.icon)
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .symbolRenderingMode(.hierarchical)
+                                            .foregroundStyle(.secondary)
+                                            .accessibilityLabel(type.title)
+                                    }
+                                }
+                            }
+                        }
+                        Spacer()
+                        Image(systemName: isSelected(task) ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(isSelected(task) ? Color.accentColor : Color.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+
+                if selectedSegment == .selected {
+                    Button {
+                        toggleTitleDetails(for: task.title)
+                    } label: {
+                        Image(systemName: expandedTitleDetails.contains(task.title) ? "chevron.up" : "chevron.down")
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, height: 32)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(expandedTitleDetails.contains(task.title) ? "Hide title details" : "Show title details")
+                }
+            }
+
+            if selectedSegment == .selected,
+               expandedTitleDetails.contains(task.title),
+               let title = persistedTitles.first(where: { $0.title == task.title }) {
+                ikigaiCards(for: title)
+                if let assessment = title.priorityAssessment {
+                    priorityQuestions(for: assessment)
+                } else {
+                    Button("Start Priority Assessment") {
+                        ensurePriorityAssessment(for: title)
+                        saveChanges()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private var displayedTasks: [Task] {
@@ -125,6 +146,21 @@ struct TaskTitlesView: View {
 
         return uniqueTasksByTitle.values.sorted {
             $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var selectedTasksWithoutAssessment: [Task] {
+        displayedTasks.filter { task in
+            guard let title = persistedTitles.first(where: { $0.title == task.title }) else {
+                return false
+            }
+            return title.priorityAssessment == nil
+        }
+    }
+
+    private func selectedTasks(in quadrant: EisenhowerQuadrant) -> [Task] {
+        displayedTasks.filter { task in
+            persistedTitles.first(where: { $0.title == task.title })?.priorityAssessment?.quadrant == quadrant
         }
     }
 
@@ -263,7 +299,7 @@ struct TaskTitlesView: View {
                     }
                     priorityQuestionCard(
                         icon: "exclamationmark.triangle.fill",
-                        title: "Consequence",
+                        title: "Risk",
                         description: "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam waktu dekat?",
                         isSelected: assessment.urgentHasConsequence
                     ) {
