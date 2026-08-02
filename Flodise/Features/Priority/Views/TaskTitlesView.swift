@@ -22,9 +22,7 @@ struct TaskTitlesView: View {
     }
 
     @State private var selectedSegment: TitleSegment = .all
-    @State private var expandedTitleDetails: Set<String> = []
-    @State private var expandedIkigaiTitles: Set<String> = []
-    @State private var expandedPriorityTitles: Set<String> = []
+    @State private var presentedTitle: TaskTitle?
     var body: some View {
         VStack(spacing: 0) {
             Picker("Titles", selection: $selectedSegment) {
@@ -64,6 +62,13 @@ struct TaskTitlesView: View {
         }
         .navigationTitle("Task Titles")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $presentedTitle) { title in
+            NavigationStack {
+                titleDetailSheet(for: title)
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
     }
 
     @ViewBuilder
@@ -102,44 +107,14 @@ struct TaskTitlesView: View {
 
                 if selectedSegment == .selected {
                     Button {
-                        toggleTitleDetails(for: task.title)
+                        presentedTitle = persistedTitles.first(where: { $0.title == task.title })
                     } label: {
-                        Image(systemName: expandedTitleDetails.contains(task.title) ? "chevron.up" : "chevron.down")
+                        Image(systemName: "chevron.right")
                             .foregroundStyle(.secondary)
                             .frame(width: 32, height: 32)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(expandedTitleDetails.contains(task.title) ? "Hide title details" : "Show title details")
-                }
-            }
-
-            if selectedSegment == .selected,
-               expandedTitleDetails.contains(task.title),
-               let title = persistedTitles.first(where: { $0.title == task.title }) {
-                collapsibleSection(
-                    title: "Ikigai",
-                    isExpanded: expandedIkigaiTitles.contains(task.title)
-                ) {
-                    toggleIkigai(for: task.title)
-                } content: {
-                    ikigaiCards(for: title)
-                }
-
-                if let assessment = title.priorityAssessment {
-                    collapsibleSection(
-                        title: "Eisenhower Matrix",
-                        isExpanded: expandedPriorityTitles.contains(task.title)
-                    ) {
-                        togglePriorityQuestions(for: task.title)
-                    } content: {
-                        priorityQuestions(for: assessment)
-                    }
-                } else {
-                    Button("Start Priority Assessment") {
-                        ensurePriorityAssessment(for: title)
-                        saveChanges()
-                    }
-                    .buttonStyle(.borderedProminent)
+                    .accessibilityLabel("Show title details")
                 }
             }
         }
@@ -239,57 +214,39 @@ struct TaskTitlesView: View {
         modelContext.insert(assessment)
     }
 
-    private func toggleTitleDetails(for title: String) {
-        if expandedTitleDetails.contains(title) {
-            expandedTitleDetails.remove(title)
-        } else {
-            expandedTitleDetails.insert(title)
-        }
-    }
-
-    private func toggleIkigai(for title: String) {
-        toggleExpansion(for: title, in: &expandedIkigaiTitles)
-    }
-
-    private func togglePriorityQuestions(for title: String) {
-        toggleExpansion(for: title, in: &expandedPriorityTitles)
-    }
-
-    private func toggleExpansion(for title: String, in expandedTitles: inout Set<String>) {
-        if expandedTitles.contains(title) {
-            expandedTitles.remove(title)
-        } else {
-            expandedTitles.insert(title)
-        }
-    }
-
     @ViewBuilder
-    private func collapsibleSection<Content: View>(
-        title: String,
-        isExpanded: Bool,
-        action: @escaping () -> Void,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button(action: action) {
-                HStack {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    Spacer()
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundStyle(.secondary)
-                }
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(isExpanded ? "Hide \(title)" : "Show \(title)")
+    private func titleDetailSheet(for title: TaskTitle) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Ikigai")
+                    .font(.headline)
+                ikigaiCards(for: title)
 
-            if isExpanded {
-                content()
+                Divider()
+
+                Text("Eisenhower Matrix")
+                    .font(.headline)
+                if let assessment = title.priorityAssessment {
+                    priorityQuestions(for: assessment)
+                } else {
+                    Button("Start Priority Assessment") {
+                        ensurePriorityAssessment(for: title)
+                        saveChanges()
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle(title.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                    presentedTitle = nil
+                }
             }
         }
-        .padding(.top, 4)
     }
 
     @ViewBuilder
@@ -325,7 +282,7 @@ struct TaskTitlesView: View {
                     priorityQuestionCard(
                         icon: "target",
                         title: "Goal",
-                        description: "Apakah tugas ini membantu saya mencapai tujuan?",
+                        description: "Apakah aktivitas ini harus ada untuk mencapai tujuan?",
                         isSelected: assessment.importantGoalContribution
                     ) {
                         assessment.importantGoalContribution.toggle()
@@ -338,6 +295,14 @@ struct TaskTitlesView: View {
                     ) {
                         assessment.importantBlocksGoal.toggle()
                     }
+                    priorityQuestionCard(
+                        icon: "arrow.triangle.swap",
+                        title: "Alternative",
+                        description: "Apakah ada aktivitas lain yang lebih membantu mencapai tujuan?",
+                        isSelected: assessment.importantHasBetterAlternative == true
+                    ) {
+                        assessment.importantHasBetterAlternative = !(assessment.importantHasBetterAlternative ?? false)
+                    }
                 }
             }
 
@@ -349,7 +314,7 @@ struct TaskTitlesView: View {
                     priorityQuestionCard(
                         icon: "clock.fill",
                         title: "Immediate",
-                        description: "Apakah tugas ini harus segera dikerjakan?",
+                        description: "Apakah aktivitas ini harus segera dikerjakan 3 hari kedepan?",
                         isSelected: assessment.urgentImmediate
                     ) {
                         assessment.urgentImmediate.toggle()
@@ -357,10 +322,18 @@ struct TaskTitlesView: View {
                     priorityQuestionCard(
                         icon: "exclamationmark.triangle.fill",
                         title: "Risk",
-                        description: "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam waktu dekat?",
+                        description: "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam 3 hari kedepan?",
                         isSelected: assessment.urgentHasConsequence
                     ) {
                         assessment.urgentHasConsequence.toggle()
+                    }
+                    priorityQuestionCard(
+                        icon: "calendar.badge.clock",
+                        title: "Can Wait",
+                        description: "Apakah tugas ini boleh ditunda?",
+                        isSelected: assessment.urgentCanBeDelayed == true
+                    ) {
+                        assessment.urgentCanBeDelayed = !(assessment.urgentCanBeDelayed ?? false)
                     }
                 }
             }
