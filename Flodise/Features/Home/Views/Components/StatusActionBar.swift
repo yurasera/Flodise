@@ -5,11 +5,14 @@
 //  Created by Yuhaya Lissera on 31/07/26.
 //
 import SwiftUI
+import SwiftData
 
 struct StatusActionBar: View {
     @Binding var isPresentingPriorityTasks: Bool
     let startFocusAction: () -> Void
 
+    @Query(sort: \Task.priorityOrder) private var tasks: [Task]
+    @State private var isPresentingTaskTitles = false
     @State private var priorityPresentationTrigger = 0
 
     var body: some View {
@@ -25,6 +28,15 @@ struct StatusActionBar: View {
             }
 
             HomeActionButton(
+                title: "Priority",
+                systemImage: "list.bullet",
+                foregroundColor: Color.brandTertiary
+            ) {
+                priorityPresentationTrigger += 1
+                isPresentingTaskTitles = true
+            }
+
+            HomeActionButton(
                 title: "Start Focus",
                 systemImage: "timer",
                 foregroundColor: Color.brandTertiary,
@@ -36,6 +48,11 @@ struct StatusActionBar: View {
         }
         .padding()
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
+        .sheet(isPresented: $isPresentingTaskTitles) {
+            NavigationStack {
+                TaskTitlesView(tasks: tasks)
+            }
+        }
     }
 }
 
