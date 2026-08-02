@@ -16,16 +16,19 @@ struct HomeView: View {
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
 
     @State private var viewModel: HomeViewModel
+    private let onFocusStateChange: (Bool) -> Void
 
     // Initialize ViewModel with modelContext
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, onFocusStateChange: @escaping (Bool) -> Void = { _ in }) {
         _viewModel = State(wrappedValue: HomeViewModel(modelContext: modelContext))
+        self.onFocusStateChange = onFocusStateChange
     }
 
     // Preview initializer
-    init() {
+    init(onFocusStateChange: @escaping (Bool) -> Void = { _ in }) {
         // Provide a dummy ViewModel for previews
         _viewModel = State(wrappedValue: HomeViewModel())
+        self.onFocusStateChange = onFocusStateChange
     }
 
     var body: some View {
@@ -64,7 +67,18 @@ struct HomeView: View {
         .onAppear {
             viewModel.setContext(modelContext)
             viewModel.ensureDailyEnergyReset()
+            onFocusStateChange(isFocusActive)
         }
+        .onChange(of: isFocusActive) { isFocusActive in
+            onFocusStateChange(isFocusActive)
+        }
+        .onDisappear {
+            onFocusStateChange(false)
+        }
+    }
+
+    private var isFocusActive: Bool {
+        viewModel.focusTask(from: tasks) != nil
     }
 
     private func stopFocus() {

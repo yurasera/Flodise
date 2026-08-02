@@ -11,13 +11,16 @@ struct AppRootView: View {
     @State private var selectedPage: AppPage = .home
     @State private var discoveryStore = DiscoveryStore()
     @State private var careerStore = CareerExplorationStore()
+    @State private var isFocusActive = false
 
     var body: some View {
         NavigationStack {
             Group {
                 switch selectedPage {
                 case .home:
-                    HomeView()
+                    HomeView { isFocusActive in
+                        self.isFocusActive = isFocusActive
+                    }
                 case .discovery:
                     DiscoveryView(store: discoveryStore, careerStore: careerStore)
                 }
@@ -57,6 +60,7 @@ struct AppRootView: View {
                     .tint(selectedPage == .discovery ? .accentColor : .secondary)
                 }
             }
+            .toolbar(isFocusActive ? .hidden : .visible, for: .bottomBar)
         }
     }
 }
