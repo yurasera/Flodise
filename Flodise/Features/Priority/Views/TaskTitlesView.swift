@@ -23,6 +23,8 @@ struct TaskTitlesView: View {
 
     @State private var selectedSegment: TitleSegment = .all
     @State private var expandedTitleDetails: Set<String> = []
+    @State private var expandedIkigaiTitles: Set<String> = []
+    @State private var expandedPriorityTitles: Set<String> = []
     var body: some View {
         VStack(spacing: 0) {
             Picker("Titles", selection: $selectedSegment) {
@@ -114,9 +116,24 @@ struct TaskTitlesView: View {
             if selectedSegment == .selected,
                expandedTitleDetails.contains(task.title),
                let title = persistedTitles.first(where: { $0.title == task.title }) {
-                ikigaiCards(for: title)
+                collapsibleSection(
+                    title: "Ikigai",
+                    isExpanded: expandedIkigaiTitles.contains(task.title)
+                ) {
+                    toggleIkigai(for: task.title)
+                } content: {
+                    ikigaiCards(for: title)
+                }
+
                 if let assessment = title.priorityAssessment {
-                    priorityQuestions(for: assessment)
+                    collapsibleSection(
+                        title: "Eisenhower Matrix",
+                        isExpanded: expandedPriorityTitles.contains(task.title)
+                    ) {
+                        togglePriorityQuestions(for: task.title)
+                    } content: {
+                        priorityQuestions(for: assessment)
+                    }
                 } else {
                     Button("Start Priority Assessment") {
                         ensurePriorityAssessment(for: title)
@@ -230,6 +247,51 @@ struct TaskTitlesView: View {
         }
     }
 
+    private func toggleIkigai(for title: String) {
+        toggleExpansion(for: title, in: &expandedIkigaiTitles)
+    }
+
+    private func togglePriorityQuestions(for title: String) {
+        toggleExpansion(for: title, in: &expandedPriorityTitles)
+    }
+
+    private func toggleExpansion(for title: String, in expandedTitles: inout Set<String>) {
+        if expandedTitles.contains(title) {
+            expandedTitles.remove(title)
+        } else {
+            expandedTitles.insert(title)
+        }
+    }
+
+    @ViewBuilder
+    private func collapsibleSection<Content: View>(
+        title: String,
+        isExpanded: Bool,
+        action: @escaping () -> Void,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button(action: action) {
+                HStack {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Spacer()
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .foregroundStyle(.secondary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isExpanded ? "Hide \(title)" : "Show \(title)")
+
+            if isExpanded {
+                content()
+            }
+        }
+        .padding(.top, 4)
+    }
+
     @ViewBuilder
     private func ikigaiCards(for title: TaskTitle) -> some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
@@ -255,11 +317,6 @@ struct TaskTitlesView: View {
     @ViewBuilder
     private func priorityQuestions(for assessment: TaskTitlePriorityAssessment) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Divider()
-
-            Text("Eisenhower Matrix")
-                .font(.headline)
-
             VStack(alignment: .leading, spacing: 8) {
                 Text("Important")
                     .font(.subheadline.weight(.semibold))
