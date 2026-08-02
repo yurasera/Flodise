@@ -22,7 +22,7 @@ struct TaskTitlesView: View {
     }
 
     @State private var selectedSegment: TitleSegment = .all
-    @State private var expandedIkigaiTitles: Set<String> = []
+    @State private var expandedTitleDetails: Set<String> = []
     var body: some View {
         VStack(spacing: 0) {
             Picker("Titles", selection: $selectedSegment) {
@@ -66,20 +66,30 @@ struct TaskTitlesView: View {
 
                             if selectedSegment == .selected {
                                 Button {
-                                    toggleIkigaiExpansion(for: task.title)
+                                    toggleTitleDetails(for: task.title)
                                 } label: {
-                                    Image(systemName: expandedIkigaiTitles.contains(task.title) ? "chevron.up" : "chevron.down")
+                                    Image(systemName: expandedTitleDetails.contains(task.title) ? "chevron.up" : "chevron.down")
                                         .foregroundStyle(.secondary)
                                         .frame(width: 32, height: 32)
                                 }
                                 .buttonStyle(.plain)
-                                .accessibilityLabel(expandedIkigaiTitles.contains(task.title) ? "Hide Ikigai" : "Show Ikigai")
+                                .accessibilityLabel(expandedTitleDetails.contains(task.title) ? "Hide title details" : "Show title details")
                             }
                         }
                         if selectedSegment == .selected,
-                           expandedIkigaiTitles.contains(task.title),
+                           expandedTitleDetails.contains(task.title),
                            let title = persistedTitles.first(where: { $0.title == task.title }) {
                             ikigaiCards(for: title)
+
+                            if let assessment = title.priorityAssessment {
+                                priorityQuestions(for: assessment)
+                            } else {
+                                Button("Start Priority Assessment") {
+                                    ensurePriorityAssessment(for: title)
+                                    saveChanges()
+                                }
+                                .buttonStyle(.borderedProminent)
+                            }
                         }
                     }
                     .padding(.vertical, 4)
@@ -121,8 +131,13 @@ struct TaskTitlesView: View {
     private func toggleSelection(for task: Task) {
         if let persistedTitle = persistedTitles.first(where: { $0.title == task.title }) {
             persistedTitle.isSelected.toggle()
+            if persistedTitle.isSelected {
+                ensurePriorityAssessment(for: persistedTitle)
+            }
         } else {
-            modelContext.insert(TaskTitle(title: task.title, isSelected: true))
+            let title = TaskTitle(title: task.title, isSelected: true)
+            modelContext.insert(title)
+            ensurePriorityAssessment(for: title)
         }
 
         do {
@@ -142,11 +157,20 @@ struct TaskTitlesView: View {
         }
     }
 
-    private func toggleIkigaiExpansion(for title: String) {
-        if expandedIkigaiTitles.contains(title) {
-            expandedIkigaiTitles.remove(title)
+    private func ensurePriorityAssessment(for title: TaskTitle) {
+        guard title.priorityAssessment == nil else {
+            return
+        }
+        let assessment = TaskTitlePriorityAssessment(taskTitle: title)
+        title.priorityAssessment = assessment
+        modelContext.insert(assessment)
+    }
+
+    private func toggleTitleDetails(for title: String) {
+        if expandedTitleDetails.contains(title) {
+            expandedTitleDetails.remove(title)
         } else {
-            expandedIkigaiTitles.insert(title)
+            expandedTitleDetails.insert(title)
         }
     }
 
@@ -172,6 +196,71 @@ struct TaskTitlesView: View {
         }
     }
 
+    @ViewBuilder
+    private func priorityQuestions(for assessment: TaskTitlePriorityAssessment) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Divider()
+
+            Text("Eisenhower Matrix")
+                .font(.headline)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Important")
+                    .font(.subheadline.weight(.semibold))
+
+                Toggle(
+                    "Apakah tugas ini membantu saya mencapai tujuan?",
+                    isOn: booleanBinding(for: assessment, keyPath: \.importantGoalContribution)
+                )
+                Toggle(
+                    "Jika saya tidak mengerjakan tugas ini, apakah tujuan saya akan tertunda atau lebih sulit tercapai?",
+                    isOn: booleanBinding(for: assessment, keyPath: \.importantBlocksGoal)
+                )
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Urgent")
+                    .font(.subheadline.weight(.semibold))
+
+                Toggle(
+                    "Apakah tugas ini harus segera dikerjakan?",
+                    isOn: booleanBinding(for: assessment, keyPath: \.urgentImmediate)
+                )
+                Toggle(
+                    "Jika ditunda, apakah akan ada konsekuensi atau masalah dalam waktu dekat?",
+                    isOn: booleanBinding(for: assessment, keyPath: \.urgentHasConsequence)
+                )
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(assessment.quadrant.label)
+                    .font(.subheadline.weight(.semibold))
+                Text(assessment.quadrant.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Text("Priority Score: \(assessment.priorityScore) · Important: \(assessment.importantScore) · Urgent: \(assessment.urgentScore)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+    }
+
+    private func booleanBinding(
+        for assessment: TaskTitlePriorityAssessment,
+        keyPath: ReferenceWritableKeyPath<TaskTitlePriorityAssessment, Bool>
+    ) -> Binding<Bool> {
+        Binding(
+            get: { assessment[keyPath: keyPath] },
+            set: { newValue in
+                assessment[keyPath: keyPath] = newValue
+                saveChanges()
+            }
+        )
+    }
+
     private func saveChanges() {
         do {
             try modelContext.save()
@@ -190,5 +279,5 @@ struct TaskTitlesView: View {
             Task(title: "Build Flodise", notes: "", category: category)
         ])
     }
-    .modelContainer(for: [Category.self, Task.self, TaskIkigaiSelection.self, TaskTitle.self, TaskTitleIkigaiSelection.self], inMemory: true)
+    .modelContainer(for: [Category.self, Task.self, TaskIkigaiSelection.self, TaskTitle.self, TaskTitleIkigaiSelection.self, TaskTitlePriorityAssessment.self], inMemory: true)
 }
