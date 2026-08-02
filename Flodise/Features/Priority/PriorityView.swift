@@ -85,6 +85,14 @@ struct PriorityView: View {
                     toggleSelection(for: task)
                 } label: {
                     HStack {
+                        Circle()
+                            .fill(categoryColor(for: task))
+                            .frame(width: 24, height: 24)
+                            .overlay {
+                                Image(systemName: task.category?.icon ?? "circle.fill")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundStyle(task.category?.headerColor ?? .gray)
+                            }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(task.title)
                                 .foregroundStyle(.primary)
@@ -164,6 +172,19 @@ struct PriorityView: View {
 
     private func isSelected(_ task: Task) -> Bool {
         isSelectedTitle(task.title)
+    }
+
+    private func categoryColor(for task: Task) -> Color {
+        switch task.category?.name {
+        case CategoryKind.current.title:
+            return Color.brandPrimary
+        case CategoryKind.alternative.title:
+            return Color.brandSecondary
+        case CategoryKind.dream.title:
+            return Color.brandTertiary
+        default:
+            return .secondary
+        }
     }
 
     private func titleUsageCount(for title: String) -> Int {
