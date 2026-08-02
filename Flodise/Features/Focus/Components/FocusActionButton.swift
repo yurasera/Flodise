@@ -12,13 +12,19 @@ struct FocusActionButton: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Button("Stop Focus", action: action)
-                .font(.headline)
-                .padding(.horizontal, 24)
-                .padding(.vertical, 12)
-                .background(backgroundColor)
-                .foregroundColor(foregroundColor)
-                .clipShape(RoundedRectangle(cornerRadius: 24))
+            Button {
+                action()
+            } label: {
+                Label("Stop", systemImage: "stop.circle.fill")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+            .background(backgroundColor)
+            .foregroundColor(foregroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .glassEffect()
         }
     }
 }

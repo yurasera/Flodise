@@ -66,7 +66,7 @@ struct FocusView: View {
 
                 Button {
                     isWorkMode.toggle()
-                    recordEvent(isWorkMode ? .workModeSelected : .breakModeSelected)
+                    recordEvent(isWorkMode ? .breakModeSelected : .workModeSelected)
                 } label: {
                     Label(isWorkMode ? "Work" : "Break", systemImage: "arrow.triangle.2.circlepath")
                         .font(.headline)
@@ -78,23 +78,19 @@ struct FocusView: View {
                 .foregroundStyle(viewModel.textColor(for: task.category?.name))
                 .clipShape(RoundedRectangle(cornerRadius: 24))
                 .glassEffect()
+                
+                FocusActionButton(
+                    action: {
+                        recordEvent(.focusSessionEnded)
+                        stopFocus()
+                    },
+                    backgroundColor: viewModel.backgroundColor(for: task.category?.name),
+                    foregroundColor: viewModel.textColor(for: task.category?.name)
+                )
             }
             .padding(.top, 16)
-
-            FocusEventLogSection(eventLogs: taskEventLogs)
-                .padding(.top, 20)
-
-            Spacer()
-
-            FocusActionButton(
-                action: {
-                    recordEvent(.focusSessionEnded)
-                    stopFocus()
-                },
-                backgroundColor: viewModel.backgroundColor(for: task.category?.name),
-                foregroundColor: viewModel.textColor(for: task.category?.name)
-            )
-                .padding(.bottom, 48)
+            .padding(.bottom, 48)
+            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(32)
