@@ -11,11 +11,14 @@ struct FocusTimerButton: View {
     let task: Task
     let pomodoroManager: PomodoroManager
     let viewModel: FocusViewModel
+    let eventType: EventLogType
+    let onTimerStarted: (EventLogType) -> Void
     
     var body: some View {
         Button(label) {
             viewModel.requestNotificationPermission()
             pomodoroManager.startPomodoro(for: task, duration: TimeInterval(duration))
+            onTimerStarted(eventType)
             viewModel.playStartHaptic()
             viewModel.playStartSound()
         }

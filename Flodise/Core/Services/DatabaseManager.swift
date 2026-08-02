@@ -20,7 +20,8 @@ enum DatabaseManager {
                 TaskIkigaiSelection.self,
                 TaskTitle.self,
                 TaskTitleIkigaiSelection.self,
-                TaskTitlePriorityAssessment.self
+                TaskTitlePriorityAssessment.self,
+                EventLog.self
             )
             try seedDataIfNeeded(in: ModelContext(container))
             return container

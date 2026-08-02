@@ -9,6 +9,8 @@ struct FocusTimerSection: View {
     let task: Task
     let pomodoroManager: PomodoroManager
     let viewModel: FocusViewModel
+    let isWorkMode: Bool
+    let onTimerStarted: (EventLogType) -> Void
     
     var body: some View {
         VStack(spacing: 16) {
@@ -30,29 +32,37 @@ struct FocusTimerSection: View {
                 .glassEffect()
             } else {
                 HStack(spacing: 8) {
-                    FocusTimerButton(
-                        label: "25 min",
-                        duration: 25 * 60,
-                        task: task,
-                        pomodoroManager: pomodoroManager,
-                        viewModel: viewModel
-                    )
-                    
-                    FocusTimerButton(
-                        label: "5 min",
-                        duration: 5 * 60,
-                        task: task,
-                        pomodoroManager: pomodoroManager,
-                        viewModel: viewModel
-                    )
-                    
-                    FocusTimerButton(
-                        label: "15 min",
-                        duration: 15 * 60,
-                        task: task,
-                        pomodoroManager: pomodoroManager,
-                        viewModel: viewModel
-                    )
+                    if isWorkMode {
+                        FocusTimerButton(
+                            label: "25 min",
+                            duration: 25 * 60,
+                            task: task,
+                            pomodoroManager: pomodoroManager,
+                            viewModel: viewModel,
+                            eventType: .workSessionStarted,
+                            onTimerStarted: onTimerStarted
+                        )
+                    } else {
+                        FocusTimerButton(
+                            label: "5 min",
+                            duration: 5 * 60,
+                            task: task,
+                            pomodoroManager: pomodoroManager,
+                            viewModel: viewModel,
+                            eventType: .breakSessionStarted,
+                            onTimerStarted: onTimerStarted
+                        )
+
+                        FocusTimerButton(
+                            label: "15 min",
+                            duration: 15 * 60,
+                            task: task,
+                            pomodoroManager: pomodoroManager,
+                            viewModel: viewModel,
+                            eventType: .breakSessionStarted,
+                            onTimerStarted: onTimerStarted
+                        )
+                    }
                 }
             }
         }
