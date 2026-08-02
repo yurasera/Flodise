@@ -12,22 +12,45 @@ struct HomeHeroSection: View {
     let energy: Int
     let level: Int
     let exp: Int
+    @State private var isShowingCapacityInfo = false
+
     var body: some View {
         VStack {
             VStack(alignment: .leading, spacing: Spacing.small) {
-                NavigationLink {
-                    StopPathView()
-                } label: {
-                    Text("Flodise")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                HStack(alignment: .center, spacing: Spacing.small) {
+                    Image(systemName: "point.topleft.down.curvedto.point.bottomright.up")
+                        .font(.title3.weight(.semibold))
                         .foregroundStyle(Color.brandSecondary)
-                }
-                .buttonStyle(.plain)
 
-                Text("Oddyssey Planning")
-                    .font(.caption)
-                    .foregroundStyle(Color.brandSecondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack{
+                            NavigationLink {
+                                StopPathView()
+                            } label: {
+                                Text("Flodise")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(Color.brandSecondary)
+                            }
+                            .buttonStyle(.plain)
+                            
+                            Spacer()
+
+                            Button {
+                                isShowingCapacityInfo = true
+                            } label: {
+                                Image(systemName: "questionmark.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.brandSecondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Daily Capacity Limit information")
+                        }
+                        Text("Oddyssey Planning")
+                            .font(.caption)
+                            .foregroundStyle(Color.brandSecondary)
+                    }
+                }
                 
                 VStack(spacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -72,6 +95,44 @@ struct HomeHeroSection: View {
         }
         .frame(maxWidth: .infinity)
         .background(Color.brandPrimary)
+        .sheet(isPresented: $isShowingCapacityInfo) {
+            DailyCapacityInfoView()
+                .presentationDetents([.medium])
+        }
+    }
+}
+
+private struct DailyCapacityInfoView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 20) {
+                Label("Daily Capacity Limit", systemImage: "bolt.fill")
+                    .font(.title2.weight(.bold))
+
+                Text("Setiap hari Anda memiliki kapasitas hingga 10 effort. Selesaikan task sesuai kapasitas ini agar rencana harian tetap realistis.")
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Tentang effort")
+                        .font(.headline)
+                    Text("Effort menggambarkan energi dan fokus yang dibutuhkan sebuah task. Nilainya dihitung dari lima indikator: perlu belajar, belum tahu cara, perlu banyak berpikir, perlu banyak langkah, dan butuh fokus penuh.")
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Capacity")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 
