@@ -58,7 +58,7 @@ struct HomeView: View {
         .ignoresSafeArea()
         .sheet(isPresented: $viewModel.isPresentingPriorityTasks) {
             NavigationStack {
-                PriorityView(tasks: tasks)
+                WorkflowView(tasks: tasks)
             }
         }
         .onAppear {

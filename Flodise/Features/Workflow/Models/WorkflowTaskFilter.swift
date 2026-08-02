@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PriorityTaskFilter {
+struct WorkflowTaskFilter {
     let tasks: [Task]
     let selectedCategory: CategoryFilter
     let selectedProgress: ProgressFilter

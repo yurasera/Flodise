@@ -46,7 +46,7 @@ struct HomeDashboard: View {
                         categoryExp: $currentExp
                     )
                 }
-                HomeStatusSection(
+                HomeWorkflowSection(
                     currentCount: currentTasks.count,
                     alternativeCount: alternativeTasks.count,
                     dreamCount: dreamTasks.count,

@@ -1,5 +1,5 @@
 //
-//  PriorityTaskRow.swift
+//  WorkflowTaskRow.swift
 //  Flodise
 //
 //  Created by Yuhaya Lissera on 06/07/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PriorityTaskRow: View {
+struct WorkflowTaskRow: View {
     let task: Task
     let onDelete: () -> Void
     let onArchive: () -> Void

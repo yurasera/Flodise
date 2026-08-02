@@ -1,5 +1,5 @@
 //
-//  PriorityFilterSection.swift
+//  WorkflowFilterSection.swift
 //  Flocus
 //
 //  Created by Yuhaya Lissera on 06/07/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PriorityFilterSection: View {
+struct WorkflowFilterSection: View {
     let tasks: [Task]
     @Binding var selectedCategory: CategoryFilter
     @Binding var selectedProgress: ProgressFilter
@@ -16,7 +16,7 @@ struct PriorityFilterSection: View {
     private let visibleProgressFilters: [ProgressFilter] = [.idea, .planned, .active]
 
     private func taskCount(for category: CategoryFilter) -> Int {
-        PriorityTaskFilter(
+        WorkflowTaskFilter(
             tasks: tasks,
             selectedCategory: category,
             selectedProgress: selectedProgress
@@ -26,7 +26,7 @@ struct PriorityFilterSection: View {
     }
 
     private func taskCount(for progress: ProgressFilter) -> Int {
-        PriorityTaskFilter(
+        WorkflowTaskFilter(
             tasks: tasks,
             selectedCategory: selectedCategory,
             selectedProgress: progress

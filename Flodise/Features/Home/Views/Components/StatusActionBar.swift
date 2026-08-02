@@ -15,7 +15,7 @@ struct StatusActionBar: View {
     var body: some View {
         VStack(spacing: 0) {
             HomeActionButton(
-                title: "Set Priority",
+                title: "Workflow",
                 systemImage: "flag.fill",
                 foregroundColor: Color.brandTertiary,
                 tintColor: Color.brandPrimary
@@ -54,7 +54,8 @@ private struct HomeActionButton: View {
                     Text(title)
                 }
                 .font(.headline)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
                 .padding(.vertical, 14)
                 .foregroundStyle(foregroundColor)
                 .clipShape(RoundedRectangle(cornerRadius: 24))

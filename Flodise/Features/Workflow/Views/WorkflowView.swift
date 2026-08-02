@@ -1,5 +1,5 @@
 //
-//  PriorityView.swift
+//  WorkflowView.swift
 //  Flodise
 //
 //  Created by Yuhaya Lissera on 02/07/26.
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @MainActor
-struct PriorityView: View {
+struct WorkflowView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
@@ -20,8 +20,8 @@ struct PriorityView: View {
     @State private var isShowingCopyConfirmation = false
     @State private var copyConfirmationTrigger = 0
     
-    private var taskFilter: PriorityTaskFilter {
-        PriorityTaskFilter(
+    private var taskFilter: WorkflowTaskFilter {
+        WorkflowTaskFilter(
             tasks: tasks,
             selectedCategory: selectedCategory,
             selectedProgress: selectedProgress
@@ -30,7 +30,7 @@ struct PriorityView: View {
 
     var body: some View {
         List {
-            PriorityFilterSection(
+            WorkflowFilterSection(
                 tasks: tasks,
                 selectedCategory: $selectedCategory,
                 selectedProgress: $selectedProgress
@@ -47,7 +47,7 @@ struct PriorityView: View {
                     NavigationLink {
                         EditTaskView(task: task)
                     } label: {
-                        PriorityTaskRow(
+                        WorkflowTaskRow(
                             task: task,
                             onDelete: { deleteTask(task) },
                             onArchive: { archiveTask(task) }
@@ -57,7 +57,7 @@ struct PriorityView: View {
                 .onMove(perform: moveTasks)
             }
         }
-        .navigationTitle("Set Priority")
+        .navigationTitle("Set Workflow")
         .navigationBarTitleDisplayMode(.inline)
         .overlay(alignment: .bottom) {
             if isShowingCopyConfirmation {
@@ -103,7 +103,7 @@ struct PriorityView: View {
 }
 
 // MARK: - Actions
-private extension PriorityView {
+private extension WorkflowView {
     func deleteTask(_ task: Task) {
         modelContext.delete(task)
     }
@@ -141,13 +141,13 @@ private extension PriorityView {
     }
 }
 
-#Preview("Priority Tasks") {
+#Preview("Workflow Tasks") {
     let current = Category(name: "Current", color: "blue")
     let alternative = Category(name: "Alternative", color: "green")
     let dream = Category(name: "Dream", color: "yellow")
 
     NavigationStack {
-        PriorityView(tasks: [
+        WorkflowView(tasks: [
             Task(title: "Learn SwiftData", notes: "Model, query, relationship", category: current),
             Task(title: "Build Flocus", notes: "Priority flow", category: alternative),
             Task(title: "Sketch UI", notes: "Explore glass style", category: dream)

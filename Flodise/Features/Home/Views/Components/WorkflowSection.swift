@@ -1,12 +1,12 @@
 //
-//  StatusSection.swift
+//  WorkflowSection.swift
 //  Flocus
 //
 //  Created by Yuhaya Lissera on 06/07/26.
 //
 import SwiftUI
 
-struct HomeStatusSection: View {
+struct HomeWorkflowSection: View {
     let currentCount: Int
     let alternativeCount: Int
     let dreamCount: Int
