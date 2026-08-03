@@ -27,6 +27,7 @@ struct EditTaskView: View {
     @State private var manySteps = false
     @State private var needFullFocus = false
     @State private var showInfo = false
+    @State private var showEstimatorInfo = false
 
     var body: some View {
         Form {
@@ -46,41 +47,44 @@ struct EditTaskView: View {
             }
             if selectedStatus != .idea && hasEstimatorValues {
                 Section("Task Estimator") {
-                    VStack(spacing: 12) {
-                        HStack {
-                            Label(estimatorSize, systemImage: "square.stack.3d.up")
-
-                            Spacer()
-
-                            Label("\(estimatorEffort)", systemImage: "bolt.fill")
-
-                            Spacer()
-
-                            Label("\(estimatorScore)", systemImage: "star.fill")
-                        }
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.secondary.opacity(0.12))
-                        )
-
-                        VStack(alignment: .leading, spacing: 8) {
-                            Label("Size menunjukkan tingkat kompleksitas task (Extra Small, Small, Medium, Large atau Extra Large).", systemImage: "square.stack.3d.up")
+                    DisclosureGroup("Effort Score : \(estimatorEffort)", isExpanded: $showEstimatorInfo) {
+                        VStack(spacing: 12) {
+                            HStack {
+                                Label(estimatorSize, systemImage: "square.stack.3d.up")
+                                
+                                Spacer()
+                                
+                                Label("\(estimatorEffort)", systemImage: "bolt.fill")
+                                
+                                Spacer()
+                                
+                                Label("\(estimatorScore)", systemImage: "star.fill")
+                            }
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color.secondary.opacity(0.12))
+                            )
                             
-                            Divider()
-
-                            Label("Effort adalah jumlah poin dari lima indikator: Perlu Belajar, Belum Tahu Cara, Perlu Banyak Berpikir, Perlu Banyak Langkah, dan Butuh Fokus Penuh.", systemImage: "bolt.fill")
-
-                            Divider()
-                            
-                            Label("Score merupakan nilai keseluruhan yang membantu menentukan prioritas pengerjaan task.", systemImage: "star.fill")
+                            VStack(alignment: .leading, spacing: 8) {
+                                Label("Size menunjukkan tingkat kompleksitas task (Extra Small, Small, Medium, Large atau Extra Large).", systemImage: "square.stack.3d.up")
+                                
+                                Divider()
+                                
+                                Label("Effort adalah jumlah poin dari lima indikator: Perlu Belajar, Belum Tahu Cara, Perlu Banyak Berpikir, Perlu Banyak Langkah, dan Butuh Fokus Penuh.", systemImage: "bolt.fill")
+                                
+                                Divider()
+                                
+                                Label("Score merupakan nilai keseluruhan yang membantu menentukan prioritas pengerjaan task.", systemImage: "star.fill")
+                            }
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                         }
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                     }
+                    .tint(.primary)
                 }
             }
             if task.status == .archive{
