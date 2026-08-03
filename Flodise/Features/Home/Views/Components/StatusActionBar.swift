@@ -12,7 +12,9 @@ struct StatusActionBar: View {
     let startFocusAction: () -> Void
 
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
+    @Query(sort: [SortDescriptor(\EventLog.occurredAt, order: .reverse)]) private var eventLogs: [EventLog]
     @State private var isPresentingTaskTitles = false
+    @State private var isPresentingEventLogs = false
     @State private var priorityPresentationTrigger = 0
 
     var body: some View {
@@ -44,6 +46,15 @@ struct StatusActionBar: View {
                 priorityPresentationTrigger += 1
                 startFocusAction()
             }
+
+            HomeActionButton(
+                title: "Event Log",
+                systemImage: "list.bullet.rectangle",
+                foregroundColor: Color.brandTertiary
+            ) {
+                priorityPresentationTrigger += 1
+                isPresentingEventLogs = true
+            }
             Spacer()
         }
         .padding()
@@ -52,6 +63,68 @@ struct StatusActionBar: View {
             NavigationStack {
                 PriorityView(tasks: tasks)
             }
+        }
+        .sheet(isPresented: $isPresentingEventLogs) {
+            HomeEventLogView(eventLogs: eventLogs)
+        }
+    }
+}
+
+private struct HomeEventLogView: View {
+    @Environment(\.dismiss) private var dismiss
+    let eventLogs: [EventLog]
+
+    var body: some View {
+        NavigationStack {
+            List(eventLogs) { eventLog in
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(eventTitle(for: eventLog))
+                        .font(.headline)
+                    Text(eventLog.taskTitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text(eventLog.occurredAt.formatted(date: .abbreviated, time: .shortened))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .overlay {
+                if eventLogs.isEmpty {
+                    ContentUnavailableView(
+                        "No Event Logs",
+                        systemImage: "list.bullet.rectangle",
+                        description: Text("Focus activity will appear here.")
+                    )
+                }
+            }
+            .navigationTitle("Event Log")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    private func eventTitle(for eventLog: EventLog) -> String {
+        switch EventLogType(rawValue: eventLog.eventType) {
+        case .focusSessionStarted:
+            return "Focus session started"
+        case .focusSessionEnded:
+            return "Focus session ended"
+        case .workModeSelected:
+            return "Switched to Work"
+        case .breakModeSelected:
+            return "Switched to Break"
+        case .workSessionStarted:
+            return "Work timer started"
+        case .breakSessionStarted:
+            return "Break timer started"
+        case nil:
+            return eventLog.eventType
         }
     }
 }
