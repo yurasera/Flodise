@@ -41,7 +41,6 @@ struct HomeWorkflowSection: View {
         VStack {
             Divider()
                 .padding(.bottom, Spacing.small)
-            Spacer()
             VStack(spacing: Spacing.medium) {
                 HStack(spacing: Spacing.large) {
                     // Current

@@ -22,7 +22,7 @@ struct StatusActionBar: View {
     ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 16) {
+        LazyVGrid(columns: columns, spacing: 6) {
             HomeActionButton(
                 title: "Workflow",
                 systemImage: "flag.fill",
