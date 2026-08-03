@@ -94,7 +94,7 @@ struct WorkflowTaskRow: View {
                 HStack(spacing: 2) {
                     Image(systemName: "calendar")
                         .foregroundStyle(.secondary)
-                    Text(task.createdAt.formatted(date: .abbreviated, time: .omitted))
+                    Text(createdDaysAgoText)
                 }
                 .font(.system(size: 10, weight: .semibold))
             }
@@ -131,5 +131,14 @@ struct WorkflowTaskRow: View {
         IkigaiType.allCases.filter { type in
             task.ikigaiSelections.contains(where: { $0.type == type })
         }
+    }
+
+    private var createdDaysAgoText: String {
+        let calendar = Calendar.current
+        let startDate = calendar.startOfDay(for: task.createdAt)
+        let today = calendar.startOfDay(for: .now)
+        let days = max(0, calendar.dateComponents([.day], from: startDate, to: today).day ?? 0)
+
+        return days == 0 ? "Hari ini" : "\(days) hari lalu"
     }
 }
