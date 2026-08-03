@@ -16,9 +16,13 @@ struct StatusActionBar: View {
     @State private var isPresentingTaskTitles = false
     @State private var isPresentingEventLogs = false
     @State private var priorityPresentationTrigger = 0
+    private let columns = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
 
     var body: some View {
-        VStack(spacing: 0) {
+        LazyVGrid(columns: columns, spacing: 16) {
             HomeActionButton(
                 title: "Workflow",
                 systemImage: "flag.fill",
@@ -28,6 +32,7 @@ struct StatusActionBar: View {
                 priorityPresentationTrigger += 1
                 isPresentingPriorityTasks = true
             }
+            .frame(maxWidth: .infinity)
 
             HomeActionButton(
                 title: "Priority",
@@ -37,6 +42,7 @@ struct StatusActionBar: View {
                 priorityPresentationTrigger += 1
                 isPresentingTaskTitles = true
             }
+            .frame(maxWidth: .infinity)
 
             HomeActionButton(
                 title: "Start Focus",
@@ -46,6 +52,7 @@ struct StatusActionBar: View {
                 priorityPresentationTrigger += 1
                 startFocusAction()
             }
+            .frame(maxWidth: .infinity)
 
             HomeActionButton(
                 title: "Event Log",
@@ -55,9 +62,9 @@ struct StatusActionBar: View {
                 priorityPresentationTrigger += 1
                 isPresentingEventLogs = true
             }
-            Spacer()
+            .frame(maxWidth: .infinity)
         }
-        .padding()
+        .padding(6)
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
         .sheet(isPresented: $isPresentingTaskTitles) {
             NavigationStack {
@@ -139,21 +146,26 @@ private struct HomeActionButton: View {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: action) {
-                HStack {
+                VStack {
                     Image(systemName: systemImage)
+                        .font(.system(size: 16, weight: .semibold))
+
                     Text(title)
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
                 }
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 14)
                 .foregroundStyle(foregroundColor)
-                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(Color.brandPrimary)
+                )
                 .glassEffect()
             }
-            .background(Color.brandPrimary)
+            .buttonStyle(HomeCardButtonStyle())
             .tint(tintColor ?? foregroundColor)
         }
-        .padding(4)
     }
 }
