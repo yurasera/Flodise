@@ -11,14 +11,14 @@ struct FocusTaskInfo: View {
     var body: some View {
         VStack(spacing: 12) {
             Text(task.title)
-                .font(.largeTitle)
-                .fontWeight(.bold)
+                .font(.title3)
                 .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
 
             if !task.notes.isEmpty {
                 Text(task.notes)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
                     .multilineTextAlignment(.center)
             }
         }
