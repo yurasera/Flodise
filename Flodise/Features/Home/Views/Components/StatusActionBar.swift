@@ -17,8 +17,8 @@ struct StatusActionBar: View {
     @State private var isPresentingEventLogs = false
     @State private var priorityPresentationTrigger = 0
     private let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 6),
+        GridItem(.flexible(), spacing: 6)
     ]
 
     var body: some View {
@@ -148,7 +148,8 @@ private struct HomeActionButton: View {
             Button(action: action) {
                 VStack {
                     Image(systemName: systemImage)
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 10, weight: .semibold))
+                        .padding(.bottom, 6)
 
                     Text(title)
                         .font(.caption)
@@ -164,6 +165,7 @@ private struct HomeActionButton: View {
                 )
                 .glassEffect()
             }
+            .padding(0)
             .buttonStyle(HomeCardButtonStyle())
             .tint(tintColor ?? foregroundColor)
         }
