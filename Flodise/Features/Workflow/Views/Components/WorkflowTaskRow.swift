@@ -40,7 +40,7 @@ struct WorkflowTaskRow: View {
                     .foregroundStyle(.secondary)
             }
             
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 if !ikigaiTypes.isEmpty {
                     HStack {
                         ForEach(ikigaiTypes) { ikigai in
@@ -59,30 +59,44 @@ struct WorkflowTaskRow: View {
                     }
                 }
                 
-                if task.estimatedSize != nil ||
-                    task.estimatedEffort != nil ||
-                    task.estimatedScore != nil {
-                    
-                    HStack {
-                        if let estimatedSize = task.estimatedSize {
-                            Label(estimatedSize, systemImage: "square.stack.3d.up")
+                HStack {
+                    if let estimatedSize = task.estimatedSize {
+                        HStack(spacing: 2) {
+                            Image(systemName: "square.stack.3d.up")
+                            Text("\(estimatedSize)")
                         }
-                        
-                        if let estimatedEffort = task.estimatedEffort {
-                            Label("\(estimatedEffort)", systemImage: "bolt.fill")
-                        }
-                        
-                        if let estimatedScore = task.estimatedScore {
-                            Label("\(estimatedScore)", systemImage: "star.fill")
-                        }
+                        .font(.system(size: 10, weight: .semibold))
                     }
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    .background(Color.secondary.opacity(0.12))
-                    .clipShape(Capsule())
+
+                    if let estimatedEffort = task.estimatedEffort {
+                        HStack(spacing: 2) {
+                            Image(systemName: "bolt.fill")
+                            Text("\(estimatedEffort)")
+                        }
+                        .font(.system(size: 10, weight: .semibold))
+                    }
+
+                    if let estimatedScore = task.estimatedScore {
+                        HStack(spacing: 2) {
+                            Image(systemName: "star.fill")
+                            Text("\(estimatedScore)")
+                        }
+                        .font(.system(size: 10, weight: .semibold))
+                    }
                 }
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 4)
+                .background(Color.secondary.opacity(0.12))
+                .clipShape(Capsule())
+                
+                HStack(spacing: 2) {
+                    Image(systemName: "calendar")
+                        .foregroundStyle(.secondary)
+                    Text(task.createdAt.formatted(date: .abbreviated, time: .omitted))
+                }
+                .font(.system(size: 10, weight: .semibold))
             }
         }
         .padding(.vertical, 6)
