@@ -46,7 +46,7 @@ struct HomeHeroSection: View {
                             .buttonStyle(.plain)
                             .accessibilityLabel("Daily Capacity Limit information")
                         }
-                        Text("Oddyssey Planning")
+                        Text("Odyssey Planning")
                             .font(.caption)
                             .foregroundStyle(Color.brandSecondary)
                     }
