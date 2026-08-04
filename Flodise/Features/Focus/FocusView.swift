@@ -78,7 +78,7 @@ struct FocusView: View {
                     isWorkMode.toggle()
                     recordEvent(isWorkMode ? .breakModeSelected : .workModeSelected)
                 } label: {
-                    Label(isWorkMode ? "Work" : "Break", systemImage: "arrow.triangle.2.circlepath")
+                    Label(isWorkMode ? "Work" : "Break", systemImage: isWorkMode ? "play.fill": "pause.fill")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                 }
