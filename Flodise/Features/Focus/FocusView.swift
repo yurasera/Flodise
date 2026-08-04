@@ -38,18 +38,21 @@ struct FocusView: View {
 
             Spacer()
             
-            FocusEnergyLevel(
-                backgroundColor: viewModel.backgroundColor(for: task.category?.name),
-                foregroundColor: viewModel.textColor(for: task.category?.name),
-                selectedEnergy: selectedEnergyLevel,
-                onSelect: recordEnergyLevel
-            )
+            if selectedEnergyLevel == nil {
+                FocusEnergyLevel(
+                    backgroundColor: viewModel.backgroundColor(for: task.category?.name),
+                    foregroundColor: viewModel.textColor(for: task.category?.name),
+                    selectedEnergy: nil,
+                    onSelect: recordEnergyLevel
+                )
+            }
 
             FocusTimerSection(
                 task: task,
                 pomodoroManager: pomodoroManager,
                 viewModel: viewModel,
                 isWorkMode: isWorkMode,
+                selectedEnergy: selectedEnergyLevel,
                 onTimerStarted: recordEvent,
                 backgroundColor: viewModel.backgroundColor(for: task.category?.name),
                 foregroundColor: viewModel.textColor(for: task.category?.name)

@@ -10,12 +10,13 @@ struct FocusTimerSection: View {
     let pomodoroManager: PomodoroManager
     let viewModel: FocusViewModel
     let isWorkMode: Bool
+    let selectedEnergy: EnergyLevel?
     let onTimerStarted: (EventLogType) -> Void
     let backgroundColor: Color
     let foregroundColor: Color
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 16) {
             if pomodoroManager.isRunning {
                 Text(pomodoroManager.currentTask?.title ?? "")
                     .font(.headline)
@@ -36,6 +37,16 @@ struct FocusTimerSection: View {
                 .glassEffect()
             } else {
                 HStack(spacing: 8) {
+                    if let selectedEnergy {
+                        FocusEnergyLevel(
+                            backgroundColor: backgroundColor,
+                            foregroundColor: foregroundColor,
+                            selectedEnergy: selectedEnergy,
+                            onSelect: { _ in },
+                            isCompact: true
+                        )
+                    }
+
                     if isWorkMode {
                         FocusTimerButton(
                             label: "25 min",

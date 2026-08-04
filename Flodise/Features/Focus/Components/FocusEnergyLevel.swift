@@ -12,6 +12,7 @@ struct FocusEnergyLevel: View {
     let foregroundColor: Color
     let selectedEnergy: EnergyLevel?
     let onSelect: (EnergyLevel) -> Void
+    var isCompact = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -25,12 +26,12 @@ struct FocusEnergyLevel: View {
                         .font(.subheadline.weight(.medium))
                 }
                 .foregroundStyle(foregroundColor)
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
                 .background(Color.accentColor.opacity(0.15))
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .accessibilityLabel("Selected energy level: \(selectedEnergy.title)")
+                .frame(maxWidth: isCompact ? nil : .infinity, alignment: .leading)
             } else {
                 Text("How's your energy right now?")
                     .font(.headline)
