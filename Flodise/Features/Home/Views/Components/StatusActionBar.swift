@@ -45,22 +45,22 @@ struct StatusActionBar: View {
             .frame(maxWidth: .infinity)
 
             HomeActionButton(
-                title: "Start Focus",
-                systemImage: "timer",
-                foregroundColor: Color.brandTertiary,
-            ) {
-                priorityPresentationTrigger += 1
-                startFocusAction()
-            }
-            .frame(maxWidth: .infinity)
-
-            HomeActionButton(
                 title: "Event Log",
                 systemImage: "list.bullet.rectangle",
                 foregroundColor: Color.brandTertiary
             ) {
                 priorityPresentationTrigger += 1
                 isPresentingEventLogs = true
+            }
+            .frame(maxWidth: .infinity)
+            
+            HomeActionButton(
+                title: "Start Focus",
+                systemImage: "timer",
+                foregroundColor: Color.brandTertiary,
+            ) {
+                priorityPresentationTrigger += 1
+                startFocusAction()
             }
             .frame(maxWidth: .infinity)
         }
