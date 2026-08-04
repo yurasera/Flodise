@@ -30,5 +30,6 @@ struct FocusTimerButton: View {
         .background(backgroundColor)
         .foregroundColor(foregroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 24))
+        .glassEffect()
     }
 }

@@ -37,6 +37,11 @@ struct FocusView: View {
             FocusTaskInfo(task: task)
 
             Spacer()
+            
+            FocusEnergyLevel(
+                backgroundColor: viewModel.backgroundColor(for: task.category?.name),
+                foregroundColor: viewModel.textColor(for: task.category?.name)
+            )
 
             FocusTimerSection(
                 task: task,
@@ -196,6 +201,37 @@ private struct FocusEventLogSheet: View {
                     }
                 }
             }
+        }
+    }
+}
+
+
+enum EnergyLevel: Int, CaseIterable, Identifiable {
+    case veryLow = 1
+    case low
+    case okay
+    case high
+    case full
+
+    var id: Int { rawValue }
+
+    var title: String {
+        switch self {
+        case .veryLow: "Very Low"
+        case .low: "Low"
+        case .okay: "Okay"
+        case .high: "High"
+        case .full: "Full"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .veryLow: "battery.0"
+        case .low: "battery.25"
+        case .okay: "battery.50"
+        case .high: "battery.75"
+        case .full: "battery.100"
         }
     }
 }
