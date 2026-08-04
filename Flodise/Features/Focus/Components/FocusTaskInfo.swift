@@ -9,10 +9,10 @@ struct FocusTaskInfo: View {
     let task: Task
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             Text(task.title)
                 .font(.title3)
-                .multilineTextAlignment(.center)
+                .multilineTextAlignment(.leading)
                 .foregroundStyle(.secondary)
 
             if !task.notes.isEmpty {
