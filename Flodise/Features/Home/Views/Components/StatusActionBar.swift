@@ -120,6 +120,12 @@ private struct HomeEventLogView: View {
         switch EventLogType(rawValue: eventLog.eventType) {
         case .focusSessionStarted:
             return "Focus session started"
+        case .energyLevelSelected:
+            if let rawValue = eventLog.energyLevelRawValue,
+               let energyLevel = EnergyLevel(rawValue: rawValue) {
+                return "Energy: \(energyLevel.title)"
+            }
+            return "Energy level selected"
         case .focusSessionEnded:
             return "Focus session ended"
         case .workModeSelected:

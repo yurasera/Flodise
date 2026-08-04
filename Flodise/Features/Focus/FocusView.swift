@@ -40,7 +40,9 @@ struct FocusView: View {
             
             FocusEnergyLevel(
                 backgroundColor: viewModel.backgroundColor(for: task.category?.name),
-                foregroundColor: viewModel.textColor(for: task.category?.name)
+                foregroundColor: viewModel.textColor(for: task.category?.name),
+                selectedEnergy: selectedEnergyLevel,
+                onSelect: recordEnergyLevel
             )
 
             FocusTimerSection(
@@ -115,7 +117,14 @@ struct FocusView: View {
     }
 
     private func recordEvent(_ eventType: EventLogType) {
-        modelContext.insert(EventLog(eventType: eventType, taskTitle: task.title))
+        modelContext.insert(
+            EventLog(
+                eventType: eventType,
+                taskTitle: task.title,
+                taskIdentifier: ensureTaskIdentifier(),
+                focusSessionStartedAt: task.focusStartedAt
+            )
+        )
 
         do {
             try modelContext.save()
@@ -124,8 +133,56 @@ struct FocusView: View {
         }
     }
 
+    private func recordEnergyLevel(_ energyLevel: EnergyLevel) {
+        guard selectedEnergyLevel == nil else { return }
+
+        modelContext.insert(
+            EventLog(
+                eventType: .energyLevelSelected,
+                taskTitle: task.title,
+                taskIdentifier: ensureTaskIdentifier(),
+                energyLevelRawValue: energyLevel.rawValue,
+                focusSessionStartedAt: task.focusStartedAt
+            )
+        )
+
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("Failed to save energy level: \(error)")
+        }
+    }
+
     private var taskEventLogs: [EventLog] {
-        eventLogs.filter { $0.taskTitle == task.title }
+        if let taskIdentifier = task.identifier {
+            return eventLogs.filter { $0.taskIdentifier == taskIdentifier }
+        }
+
+        // Logs created before identifiers were introduced can still be displayed.
+        return eventLogs.filter { $0.taskIdentifier == nil && $0.taskTitle == task.title }
+    }
+
+    private func ensureTaskIdentifier() -> UUID {
+        if let identifier = task.identifier {
+            return identifier
+        }
+
+        let identifier = UUID()
+        task.identifier = identifier
+        return identifier
+    }
+
+    private var selectedEnergyLevel: EnergyLevel? {
+        guard let sessionStartedAt = task.focusStartedAt,
+              let energyEvent = taskEventLogs.first(where: {
+                  EventLogType(rawValue: $0.eventType) == .energyLevelSelected &&
+                  $0.focusSessionStartedAt == sessionStartedAt
+              }),
+              let rawValue = energyEvent.energyLevelRawValue else {
+            return nil
+        }
+
+        return EnergyLevel(rawValue: rawValue)
     }
 }
 
@@ -166,6 +223,12 @@ private struct FocusEventLogSection: View {
         switch EventLogType(rawValue: eventLog.eventType) {
         case .focusSessionStarted:
             return "Focus session started"
+        case .energyLevelSelected:
+            if let rawValue = eventLog.energyLevelRawValue,
+               let energyLevel = EnergyLevel(rawValue: rawValue) {
+                return "Energy: \(energyLevel.title)"
+            }
+            return "Energy level selected"
         case .focusSessionEnded:
             return "Focus session ended"
         case .workModeSelected:

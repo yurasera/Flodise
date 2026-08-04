@@ -11,6 +11,9 @@ import SwiftData
 @Model
 final class Task {
 
+    /// Stable identifier used by logs so tasks with the same title stay separate.
+    /// Optional to keep existing SwiftData stores migration-compatible.
+    var identifier: UUID?
     var title: String
     var notes: String
     var status: TaskStatus
@@ -33,6 +36,7 @@ final class Task {
         notes: String,
         category: Category?
     ) {
+        self.identifier = UUID()
         self.title = title
         self.notes = notes
         self.category = category
