@@ -33,7 +33,7 @@ struct StatusActionBar: View {
             isPresentingActions = true
         }
         .frame(maxWidth: .infinity)
-        .padding(6)
+        .padding(12)
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
         .sheet(isPresented: $isPresentingActions, onDismiss: performPendingAction) {
             actionSheet
@@ -113,104 +113,5 @@ struct StatusActionBar: View {
         let action = pendingAction
         pendingAction = nil
         action?()
-    }
-}
-
-private struct HomeEventLogView: View {
-    @Environment(\.dismiss) private var dismiss
-    let eventLogs: [EventLog]
-
-    var body: some View {
-        NavigationStack {
-            List(eventLogs) { eventLog in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(eventTitle(for: eventLog))
-                        .font(.headline)
-                    Text(eventLog.taskTitle)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    Text(eventLog.occurredAt.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            .overlay {
-                if eventLogs.isEmpty {
-                    ContentUnavailableView(
-                        "No Event Logs",
-                        systemImage: "list.bullet.rectangle",
-                        description: Text("Focus activity will appear here.")
-                    )
-                }
-            }
-            .navigationTitle("Event Log")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-
-    private func eventTitle(for eventLog: EventLog) -> String {
-        switch EventLogType(rawValue: eventLog.eventType) {
-        case .focusSessionStarted:
-            return "Focus session started"
-        case .energyLevelSelected:
-            if let rawValue = eventLog.energyLevelRawValue,
-               let energyLevel = EnergyLevel(rawValue: rawValue) {
-                return "Energy: \(energyLevel.title)"
-            }
-            return "Energy level selected"
-        case .focusSessionEnded:
-            return "Focus session ended"
-        case .workModeSelected:
-            return "Switched to Work"
-        case .breakModeSelected:
-            return "Switched to Break"
-        case .workSessionStarted:
-            return "Work timer started"
-        case .breakSessionStarted:
-            return "Break timer started"
-        case nil:
-            return eventLog.eventType
-        }
-    }
-}
-
-private struct HomeActionButton: View {
-    let title: String
-    let systemImage: String
-    let foregroundColor: Color
-    var tintColor: Color?
-    let action: () -> Void
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Button(action: action) {
-                HStack {
-                    Image(systemName: systemImage)
-
-                    Text(title)
-                        .font(.caption)
-                        .multilineTextAlignment(.center)
-                }
-                .foregroundStyle(foregroundColor)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 22)
-                        .fill(Color.brandPrimary)
-                )
-                .glassEffect()
-            }
-            .padding(0)
-            .buttonStyle(HomeCardButtonStyle())
-            .tint(tintColor ?? foregroundColor)
-        }
     }
 }
