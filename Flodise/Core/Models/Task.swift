@@ -22,6 +22,8 @@ final class Task {
     var estimatedSize: String?
     var estimatedEffort: Int?
     var createdAt: Date
+    /// Optional scheduled time used by TodayView. Optional for migration compatibility.
+    var todayTime: Date?
     var focusStartedAt: Date?
     var completedAt: Date?
     
@@ -46,6 +48,7 @@ final class Task {
         self.estimatedSize = nil
         self.estimatedEffort = nil
         self.createdAt = .now
+        self.todayTime = nil
         self.focusStartedAt = nil
         self.completedAt = nil
         self.ikigaiSelections = []

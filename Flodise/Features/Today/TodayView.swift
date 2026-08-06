@@ -5,12 +5,32 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct TodayView: View {
-    @Query(sort: \Task.createdAt) private var tasks: [Task]
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \Task.priorityOrder) private var tasks: [Task]
+    @State private var draggedTask: Task?
+    @State private var dropTarget: TimePeriod?
+    @State private var isDropTargetingUnscheduled = false
 
     var body: some View {
         List {
+            Section("Unscheduled") {
+                if unscheduledTasks.isEmpty {
+                    Text("Drag a task here to remove its scheduled time.")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(unscheduledTasks) { task in
+                        taskRow(for: task)
+                    }
+                }
+            }
+            .onDrop(of: [UTType.text], isTargeted: $isDropTargetingUnscheduled) { _ in
+                handleDrop(to: nil)
+            }
+            .listRowBackground(isDropTargetingUnscheduled ? Color.accentColor.opacity(0.14) : Color.clear)
+
             ForEach(TimePeriod.allCases) { period in
                 Section {
                     if tasks(in: period).isEmpty {
@@ -33,6 +53,10 @@ struct TodayView: View {
                             .textCase(nil)
                     }
                 }
+                .onDrop(of: [UTType.text], isTargeted: dropTargetBinding(for: period)) { _ in
+                    handleDrop(to: period)
+                }
+                .listRowBackground(dropTarget == period ? Color.accentColor.opacity(0.14) : Color.clear)
             }
         }
         .overlay {
@@ -53,8 +77,15 @@ struct TodayView: View {
         tasks.filter { $0.status == .backlog || $0.status == .completed }
     }
 
+    private var unscheduledTasks: [Task] {
+        displayedTasks.filter { $0.todayTime == nil }
+    }
+
     private func tasks(in period: TimePeriod) -> [Task] {
-        displayedTasks.filter { period.contains($0.createdAt) }
+        displayedTasks.filter { task in
+            guard let todayTime = task.todayTime else { return false }
+            return period.contains(todayTime)
+        }
     }
 
     @ViewBuilder
@@ -78,11 +109,43 @@ struct TodayView: View {
                     .lineLimit(2)
             }
 
-            Text(task.createdAt.formatted(date: .omitted, time: .shortened))
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if let todayTime = task.todayTime {
+                Text(todayTime.formatted(date: .omitted, time: .shortened))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 2)
+        .onDrag {
+            draggedTask = task
+            return NSItemProvider(object: task.title as NSString)
+        }
+    }
+
+    private func dropTargetBinding(for period: TimePeriod) -> Binding<Bool> {
+        Binding(
+            get: { dropTarget == period },
+            set: { isTargeted in
+                dropTarget = isTargeted ? period : nil
+            }
+        )
+    }
+
+    private func handleDrop(to period: TimePeriod?) -> Bool {
+        guard let draggedTask else { return false }
+
+        draggedTask.todayTime = period?.scheduledTime
+        self.draggedTask = nil
+        dropTarget = nil
+        isDropTargetingUnscheduled = false
+
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("Could not save task time: \(error)")
+        }
+
+        return true
     }
 }
 
@@ -143,6 +206,27 @@ private enum TimePeriod: CaseIterable, Identifiable {
         case .midnight: return "Tengah malam"
         case .lateNight: return "Dini hari"
         }
+    }
+
+    var scheduledTime: Date {
+        let calendar = Calendar.current
+        let hour: Int
+        let minute: Int
+
+        switch self {
+        case .midnight: (hour, minute) = (0, 0)
+        case .lateNight: (hour, minute) = (0, 1)
+        case .dawn: (hour, minute) = (4, 0)
+        case .morning: (hour, minute) = (6, 1)
+        case .noon: (hour, minute) = (12, 0)
+        case .afternoon: (hour, minute) = (12, 1)
+        case .twilight: (hour, minute) = (17, 31)
+        case .dusk: (hour, minute) = (18, 1)
+        case .evening: (hour, minute) = (18, 31)
+        case .night: (hour, minute) = (21, 1)
+        }
+
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: .now) ?? .now
     }
 
     func contains(_ date: Date) -> Bool {
