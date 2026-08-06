@@ -18,31 +18,45 @@ struct TodayView: View {
 
     var body: some View {
         List {
-            Section("Unscheduled") {
-                if unscheduledTasks.isEmpty {
-                    Text("Drag a task here to remove its scheduled time.")
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(unscheduledTasks) { task in
-                        taskRow(for: task, isUnscheduled: true)
-                    }
-                }
-            }
-            .onDrop(of: [UTType.text], isTargeted: $isDropTargetingUnscheduled) { _ in
-                handleDrop(to: nil)
-            }
-            .listRowBackground(isDropTargetingUnscheduled ? Color.accentColor.opacity(0.14) : Color.clear)
-
-            ForEach(TimePeriod.allCases) { period in
-                Section {
-                    if tasks(in: period).isEmpty {
-                        Text("No tasks")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(tasks(in: period)) { task in
-                            taskRow(for: task)
+            if !unscheduledTasks.isEmpty {
+                Section("Unscheduled") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(unscheduledTasks) { task in
+                            taskRow(for: task, isUnscheduled: true)
                         }
                     }
+                    .padding()
+                    .background(.background)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(.gray.opacity(0.2))
+                    )
+                }
+                .onDrop(of: [UTType.text], isTargeted: $isDropTargetingUnscheduled) { _ in
+                    handleDrop(to: nil)
+                }
+                .listRowBackground(isDropTargetingUnscheduled ? Color.accentColor.opacity(0.14) : Color.clear)
+            }
+            ForEach(TimePeriod.allCases.filter { !tasks(in: $0).isEmpty }) { period in
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if tasks(in: period).isEmpty {
+                            Text("No tasks")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(tasks(in: period)) { task in
+                                taskRow(for: task)
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(.background)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(.gray.opacity(0.2))
+                    )
                 } header: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(period.title)
@@ -126,9 +140,7 @@ struct TodayView: View {
     @ViewBuilder
     private func taskRow(for task: Task, isUnscheduled: Bool = false) -> some View {
         Button {
-            if isUnscheduled {
-                openTimeEditor(for: task)
-            }
+            openTimeEditor(for: task)
         } label: {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline) {
