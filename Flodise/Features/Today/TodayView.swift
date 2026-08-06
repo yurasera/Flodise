@@ -13,6 +13,8 @@ struct TodayView: View {
     @State private var draggedTask: Task?
     @State private var dropTarget: TimePeriod?
     @State private var isDropTargetingUnscheduled = false
+    @State private var editingTask: Task?
+    @State private var selectedTimePeriod: TimePeriod?
 
     var body: some View {
         List {
@@ -22,7 +24,7 @@ struct TodayView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(unscheduledTasks) { task in
-                        taskRow(for: task)
+                        taskRow(for: task, isUnscheduled: true)
                     }
                 }
             }
@@ -59,6 +61,39 @@ struct TodayView: View {
                 .listRowBackground(dropTarget == period ? Color.accentColor.opacity(0.14) : Color.clear)
             }
         }
+        .sheet(item: $editingTask) { task in
+            NavigationStack {
+                Form {
+                    Section("Time Period") {
+                        Picker("Time Period", selection: Binding(
+                            get: { selectedTimePeriod ?? .morning },
+                            set: { selectedTimePeriod = $0 }
+                        )) {
+                            ForEach(TimePeriod.allCases) { period in
+                                Text(period.title)
+                                    .tag(period)
+                            }
+                        }
+                        .pickerStyle(.wheel)
+                    }
+                }
+                .navigationTitle("Set Time")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            editingTask = nil
+                            selectedTimePeriod = nil
+                        }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            saveEditingTime(for: task)
+                        }
+                    }
+                }
+            }
+        }
         .overlay {
             if displayedTasks.isEmpty {
                 ContentUnavailableView(
@@ -89,33 +124,41 @@ struct TodayView: View {
     }
 
     @ViewBuilder
-    private func taskRow(for task: Task) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(task.title)
-                    .font(.body.weight(.medium))
-
-                Spacer()
-
-                Text(task.status.title)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(task.status == .completed ? .green : .orange)
+    private func taskRow(for task: Task, isUnscheduled: Bool = false) -> some View {
+        Button {
+            if isUnscheduled {
+                openTimeEditor(for: task)
             }
+        } label: {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(task.title)
+                        .font(.body.weight(.medium))
 
-            if !task.notes.isEmpty {
-                Text(task.notes)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-            }
+                    Spacer()
 
-            if let todayTime = task.todayTime {
-                Text(todayTime.formatted(date: .omitted, time: .shortened))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    Text(task.status.title)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(task.status == .completed ? .green : .orange)
+                }
+
+                if !task.notes.isEmpty {
+                    Text(task.notes)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+
+                if let todayTime = task.todayTime {
+                    Text(todayTime.formatted(date: .omitted, time: .shortened))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .padding(.vertical, 2)
         }
-        .padding(.vertical, 2)
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
         .onDrag {
             draggedTask = task
             return NSItemProvider(object: task.title as NSString)
@@ -129,6 +172,23 @@ struct TodayView: View {
                 dropTarget = isTargeted ? period : nil
             }
         )
+    }
+
+    private func openTimeEditor(for task: Task) {
+        editingTask = task
+        selectedTimePeriod = TimePeriod.period(for: task.todayTime)
+    }
+
+    private func saveEditingTime(for task: Task) {
+        task.todayTime = selectedTimePeriod?.scheduledTime
+        editingTask = nil
+        selectedTimePeriod = nil
+
+        do {
+            try modelContext.save()
+        } catch {
+            assertionFailure("Could not save task time: \(error)")
+        }
     }
 
     private func handleDrop(to period: TimePeriod?) -> Bool {
@@ -227,6 +287,12 @@ private enum TimePeriod: CaseIterable, Identifiable {
         }
 
         return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: .now) ?? .now
+    }
+
+    static func period(for date: Date?) -> TimePeriod? {
+        guard let date else { return nil }
+
+        return TimePeriod.allCases.first(where: { $0.contains(date) })
     }
 
     func contains(_ date: Date) -> Bool {

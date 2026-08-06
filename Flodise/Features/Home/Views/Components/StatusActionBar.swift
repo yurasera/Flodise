@@ -47,7 +47,7 @@ struct StatusActionBar: View {
                         }
                     }
             }
-                .presentationDetents([.height(310)])
+            .presentationDetents([.height(310),.medium, .large])
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isPresentingTaskTitles) {
