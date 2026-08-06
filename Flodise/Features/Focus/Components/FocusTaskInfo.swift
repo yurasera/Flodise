@@ -19,8 +19,9 @@ struct FocusTaskInfo: View {
                 Text(task.notes)
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.leading)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

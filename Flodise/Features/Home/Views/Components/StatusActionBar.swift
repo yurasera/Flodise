@@ -13,6 +13,8 @@ struct StatusActionBar: View {
 
     @Query(sort: \Task.priorityOrder) private var tasks: [Task]
     @Query(sort: [SortDescriptor(\EventLog.occurredAt, order: .reverse)]) private var eventLogs: [EventLog]
+    @State private var isPresentingActions = false
+    @State private var pendingAction: (() -> Void)?
     @State private var isPresentingTaskTitles = false
     @State private var isPresentingEventLogs = false
     @State private var priorityPresentationTrigger = 0
@@ -22,50 +24,22 @@ struct StatusActionBar: View {
     ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 6) {
-            HomeActionButton(
-                title: "Workflow",
-                systemImage: "flag.fill",
-                foregroundColor: Color.brandTertiary,
-                tintColor: Color.brandPrimary
-            ) {
-                priorityPresentationTrigger += 1
-                isPresentingPriorityTasks = true
-            }
-            .frame(maxWidth: .infinity)
-
-            HomeActionButton(
-                title: "Priority",
-                systemImage: "list.bullet",
-                foregroundColor: Color.brandTertiary
-            ) {
-                priorityPresentationTrigger += 1
-                isPresentingTaskTitles = true
-            }
-            .frame(maxWidth: .infinity)
-
-            HomeActionButton(
-                title: "Event Log",
-                systemImage: "list.bullet.rectangle",
-                foregroundColor: Color.brandTertiary
-            ) {
-                priorityPresentationTrigger += 1
-                isPresentingEventLogs = true
-            }
-            .frame(maxWidth: .infinity)
-            
-            HomeActionButton(
-                title: "Start Focus",
-                systemImage: "timer",
-                foregroundColor: Color.brandTertiary,
-            ) {
-                priorityPresentationTrigger += 1
-                startFocusAction()
-            }
-            .frame(maxWidth: .infinity)
+        HomeActionButton(
+            title: "Actions",
+            systemImage: "ellipsis.circle",
+            foregroundColor: Color.brandTertiary,
+            tintColor: Color.brandPrimary
+        ) {
+            isPresentingActions = true
         }
+        .frame(maxWidth: .infinity)
         .padding(6)
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
+        .sheet(isPresented: $isPresentingActions, onDismiss: performPendingAction) {
+            actionSheet
+                .presentationDetents([.height(250)])
+                .presentationDragIndicator(.visible)
+        }
         .sheet(isPresented: $isPresentingTaskTitles) {
             NavigationStack {
                 PriorityView(tasks: tasks)
@@ -74,6 +48,71 @@ struct StatusActionBar: View {
         .sheet(isPresented: $isPresentingEventLogs) {
             HomeEventLogView(eventLogs: eventLogs)
         }
+    }
+
+    private var actionSheet: some View {
+        LazyVGrid(columns: columns, spacing: 6) {
+            HomeActionButton(
+                title: "Workflow",
+                systemImage: "flag.fill",
+                foregroundColor: Color.brandTertiary,
+                tintColor: Color.brandPrimary
+            ) {
+                dismissActionsThen {
+                    priorityPresentationTrigger += 1
+                    isPresentingPriorityTasks = true
+                }
+            }
+            .frame(maxWidth: .infinity)
+
+            HomeActionButton(
+                title: "Priority",
+                systemImage: "list.bullet",
+                foregroundColor: Color.brandTertiary
+            ) {
+                dismissActionsThen {
+                    priorityPresentationTrigger += 1
+                    isPresentingTaskTitles = true
+                }
+            }
+            .frame(maxWidth: .infinity)
+
+            HomeActionButton(
+                title: "Event Log",
+                systemImage: "list.bullet.rectangle",
+                foregroundColor: Color.brandTertiary
+            ) {
+                dismissActionsThen {
+                    priorityPresentationTrigger += 1
+                    isPresentingEventLogs = true
+                }
+            }
+            .frame(maxWidth: .infinity)
+            
+            HomeActionButton(
+                title: "Start Focus",
+                systemImage: "timer",
+                foregroundColor: Color.brandTertiary,
+            ) {
+                dismissActionsThen {
+                    priorityPresentationTrigger += 1
+                    startFocusAction()
+                }
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(6)
+    }
+
+    private func dismissActionsThen(_ action: @escaping () -> Void) {
+        pendingAction = action
+        isPresentingActions = false
+    }
+
+    private func performPendingAction() {
+        let action = pendingAction
+        pendingAction = nil
+        action?()
     }
 }
 
@@ -152,10 +191,8 @@ private struct HomeActionButton: View {
     var body: some View {
         VStack(spacing: 0) {
             Button(action: action) {
-                VStack {
+                HStack {
                     Image(systemName: systemImage)
-                        .font(.system(size: 10, weight: .semibold))
-                        .padding(.bottom, 6)
 
                     Text(title)
                         .font(.caption)
