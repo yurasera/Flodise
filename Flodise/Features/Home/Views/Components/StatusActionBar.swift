@@ -15,6 +15,7 @@ struct StatusActionBar: View {
     @Query(sort: [SortDescriptor(\EventLog.occurredAt, order: .reverse)]) private var eventLogs: [EventLog]
     @State private var isPresentingActions = false
     @State private var pendingAction: (() -> Void)?
+    @State private var actionNavigationPath: [ActionDestination] = []
     @State private var isPresentingTaskTitles = false
     @State private var isPresentingEventLogs = false
     @State private var priorityPresentationTrigger = 0
@@ -30,14 +31,23 @@ struct StatusActionBar: View {
             foregroundColor: Color.brandTertiary,
             tintColor: Color.brandPrimary
         ) {
+            actionNavigationPath = []
             isPresentingActions = true
         }
         .frame(maxWidth: .infinity)
         .padding(12)
         .sensoryFeedback(.impact(weight: .heavy), trigger: priorityPresentationTrigger)
         .sheet(isPresented: $isPresentingActions, onDismiss: performPendingAction) {
-            actionSheet
-                .presentationDetents([.height(250)])
+            NavigationStack(path: $actionNavigationPath) {
+                actionSheet
+                    .navigationDestination(for: ActionDestination.self) { destination in
+                        switch destination {
+                        case .today:
+                            TodayView()
+                        }
+                    }
+            }
+                .presentationDetents([.height(310)])
                 .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $isPresentingTaskTitles) {
@@ -100,6 +110,16 @@ struct StatusActionBar: View {
                 }
             }
             .frame(maxWidth: .infinity)
+
+            HomeActionButton(
+                title: "Today",
+                systemImage: "calendar",
+                foregroundColor: Color.brandTertiary
+            ) {
+                priorityPresentationTrigger += 1
+                actionNavigationPath.append(.today)
+            }
+            .frame(maxWidth: .infinity)
         }
         .padding(6)
     }
@@ -110,8 +130,13 @@ struct StatusActionBar: View {
     }
 
     private func performPendingAction() {
+        actionNavigationPath = []
         let action = pendingAction
         pendingAction = nil
         action?()
     }
+}
+
+private enum ActionDestination: Hashable {
+    case today
 }
