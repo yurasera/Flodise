@@ -38,41 +38,21 @@ struct TodayView: View {
                 }
                 .listRowBackground(isDropTargetingUnscheduled ? Color.accentColor.opacity(0.14) : Color.clear)
             }
-            ForEach(TimePeriod.allCases.filter { !tasks(in: $0).isEmpty }) { period in
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if tasks(in: period).isEmpty {
-                            Text("No tasks")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(tasks(in: period)) { task in
-                                taskRow(for: task)
-                            }
-                        }
+            ForEach(TimePeriod.allCases) { period in
+                // Cache tasks for this period to avoid repeated computation and help type-checker
+                let periodTasks = tasks(in: period)
+
+                if !periodTasks.isEmpty {
+                    Section {
+                        periodCard(tasks: periodTasks)
+                    } header: {
+                        periodHeader(period)
                     }
-                    .padding()
-                    .background(.background)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(.gray.opacity(0.2))
-                    )
-                } header: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(period.title)
-                        Text(period.timeRange)
-                            .font(.caption)
-                            .textCase(nil)
-                        Text(period.description)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .textCase(nil)
+                    .onDrop(of: [UTType.text], isTargeted: dropTargetBinding(for: period)) { _ in
+                        handleDrop(to: period)
                     }
+                    .listRowBackground(dropTarget == period ? Color.accentColor.opacity(0.14) : Color.clear)
                 }
-                .onDrop(of: [UTType.text], isTargeted: dropTargetBinding(for: period)) { _ in
-                    handleDrop(to: period)
-                }
-                .listRowBackground(dropTarget == period ? Color.accentColor.opacity(0.14) : Color.clear)
             }
         }
         .sheet(item: $editingTask) { task in
@@ -80,7 +60,7 @@ struct TodayView: View {
                 Form {
                     Section("Time Period") {
                         Picker("Time Period", selection: Binding(
-                            get: { selectedTimePeriod ?? .morning },
+                            get: { selectedTimePeriod ?? .dawn },
                             set: { selectedTimePeriod = $0 }
                         )) {
                             ForEach(TimePeriod.allCases) { period in
@@ -123,7 +103,7 @@ struct TodayView: View {
     }
 
     private var displayedTasks: [Task] {
-        tasks.filter { $0.status == .backlog || $0.status == .completed }
+        tasks.filter { $0.status == .backlog }
     }
 
     private var unscheduledTasks: [Task] {
@@ -218,6 +198,39 @@ struct TodayView: View {
         }
 
         return true
+    }
+    
+    @ViewBuilder
+    private func periodCard(tasks: [Task]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            ForEach(tasks) { task in
+                taskRow(for: task)
+            }
+        }
+        .padding()
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(.gray.opacity(0.2))
+        }
+    }
+    
+    @ViewBuilder
+    private func periodHeader(_ period: TimePeriod) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(period.title)
+                    .font(.headline)
+                Spacer()
+                Text(period.timeRange)
+                    .font(.caption)
+            }
+
+            Text(period.description)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
     }
 }
 

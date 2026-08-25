@@ -63,10 +63,10 @@ enum CategoryKind {
         if limited.isEmpty {
             // Show three empty placeholder cards when there is no data
                 HomeCategoryCard(
-                title: "",
-                description: "",
-                background: headerColor,
-                foreground: backgroundColor,
+                title: "Get started?",
+                description: "Tap + above to create your first task.",
+                background: headerColor.opacity(0.1),
+                foreground: headerColor,
                 task: nil,
                 energy: energy,
                 globalLevel: globalLevel,
